@@ -4,12 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第27章 数据治理、溯源与安全保障</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,16 +241,16 @@
             <li><a href="27.html" class="active">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-<h2>第27章 数据治理、溯源与安全保障</h2>
+<h1>第27章 数据治理、溯源与安全保障</h1>
 
 <p>大家好！想象一下这个场景：你花了三个月精心构建的数据管道、清洗了TB级数据、训练出了一个性能优秀的模型，然后把产品推上线。一周后，法务部门找到你——"我们发现训练数据里包含用户隐私信息，根据GDPR和《个人信息保护法》，这可能面临年营业额4%的罚款。"你翻遍所有流水线，发现没有任何地方记录了这些数据从哪里来、经过了哪些处理、最终去了哪里。这就是没有数据治理的代价。</p>
 
 <p>本章我们要聊的是<strong>数据治理、溯源与安全</strong>——这听起来像是法务和合规团队的事，但实际上，它深深嵌入在数据准备的技术体系中。从PII（个人身份信息）检测、数据脱敏、溯源链构建，到LLM水印技术、质量监控反馈闭环，每一个环节都需要数据工程师和技术架构师的深度参与。在一个AI监管日益严格的时代，"合规"已经从一个"可选加分项"变成了"生死线"。</p>
 
-<h3>27.1 数据治理：AI时代的"安全带"</h3>
+<h2>27.1 数据治理：AI时代的"安全带"</h2>
 
 <p>数据治理（Data Governance）这个概念并不新——在传统数据仓库和BI领域，它已经存在了几十年。但在AI时代，数据治理面临着全新的挑战：</p>
 
@@ -98,7 +298,7 @@
     <p>追查后发现：数据集中有约0.3%的图片包含用户无意中上传的身份证、银行卡、地址等敏感信息。而我们的清洗流水线中，<strong>完全没有PII检测这个环节</strong>。最终结果是模型下线两周，整个清洗流水线重做，增加了光学字符识别+PII正则+PII模型三级检测，损失了百万级的营收。教训：在数据准备阶段就埋下PII检测的钩子，比在模型上线后补救要便宜100倍。</p>
 </div>
 
-<h3>27.2 溯源链：每一步都可审计</h3>
+<h2>27.2 溯源链：每一步都可审计</h2>
 
 <p>数据溯源（Data Provenance）是数据治理的技术基石。它的核心目标是：<strong>对数据集中每一个样本，都能回答"谁、在什么时候、通过什么操作、从哪个源数据产生"</strong>。</p>
 
@@ -157,7 +357,36 @@
     <strong>💡 工程实践</strong>：生产环境中，我们建议用<a href="https://www.delta.io/">Delta Lake</a>或<a href="https://iceberg.apache.org/">Apache Iceberg</a>作为数据湖的底层存储。它们天然支持时间旅行（time travel）和ACID事务，配合CuratorKIT的溯源元数据，可以构建完整的、企业级的数据溯源体系。任何一条训练数据，你都可以回溯到它的"前世今生"。
 </div>
 
-<h3>27.3 PII检测与隐私保护</h3>
+<figure id="fig-provenance">
+    <svg viewBox="0 0 960 320" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="provTitle provDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+        <title id="provTitle">样本级溯源链与追加写入的溯源日志</title>
+        <desc id="provDesc">一个样本从原始语料 raw_corpus_v2 出发，依次经过 clean_html_mapper、language_id_filter、llm_label_mapper 三个算子，最终进入不可变的数据集快照 cleaned_v3。每一步记录操作名、版本与输入输出哈希，全部写入追加日志，写入后不可修改或删除。</desc>
+        <defs><marker id="provArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0d9488"/></marker></defs>
+        <text x="480" y="32" font-size="14" font-weight="600" fill="#4c1d95">溯源链：每个样本都能回答 谁 / 何时 / 什么操作 / 从哪来</text>
+        <rect x="15" y="80" width="130" height="70" rx="12" fill="#f1f5f9" stroke="#94a3b8"/>
+        <text x="80" y="108" font-size="12" font-weight="600" fill="#334155">原始语料</text><text x="80" y="130" font-size="10" fill="#64748b">raw_corpus_v2</text>
+        <rect x="185" y="80" width="150" height="70" rx="12" fill="#ecfeff" stroke="#0d9488"/>
+        <text x="260" y="106" font-size="12" font-weight="600" fill="#115e59">clean_html</text><text x="260" y="126" font-size="10" fill="#0f766e">v2.1.0</text><text x="260" y="142" font-size="10" fill="#94a3b8">hash a1b2→c3d4</text>
+        <rect x="375" y="80" width="150" height="70" rx="12" fill="#ecfeff" stroke="#0d9488"/>
+        <text x="450" y="106" font-size="12" font-weight="600" fill="#115e59">lang_filter</text><text x="450" y="126" font-size="10" fill="#0f766e">v2.1.0 · passed</text><text x="450" y="142" font-size="10" fill="#94a3b8">conf 0.96</text>
+        <rect x="565" y="80" width="150" height="70" rx="12" fill="#ecfeff" stroke="#0d9488"/>
+        <text x="640" y="106" font-size="12" font-weight="600" fill="#115e59">llm_label</text><text x="640" y="126" font-size="10" fill="#0f766e">v1.5.2 · qwen2-7b</text><text x="640" y="142" font-size="10" fill="#94a3b8">field quality_label</text>
+        <rect x="755" y="80" width="190" height="70" rx="12" fill="#ede9fe" stroke="#7c3aed"/>
+        <text x="850" y="108" font-size="12" font-weight="600" fill="#4c1d95">数据集快照</text><text x="850" y="130" font-size="10" fill="#5b21b6">cleaned_v3_snapshot</text>
+        <g stroke="#0d9488" stroke-width="2">
+            <line x1="145" y1="115" x2="181" y2="115" marker-end="url(#provArrow)"/>
+            <line x1="335" y1="115" x2="371" y2="115" marker-end="url(#provArrow)"/>
+            <line x1="525" y1="115" x2="561" y2="115" marker-end="url(#provArrow)"/>
+            <line x1="715" y1="115" x2="751" y2="115" marker-end="url(#provArrow)"/>
+        </g>
+        <rect x="15" y="215" width="930" height="66" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2" stroke-dasharray="8 5"/>
+        <text x="480" y="244" font-size="13" font-weight="600" fill="#115e59">追加写入（append-only）的溯源日志</text>
+        <text x="480" y="266" font-size="11" fill="#0f766e">每条记录写入后不可修改或删除——任何人都无法篡改历史，审计才可信</text>
+    </svg>
+    <figcaption>图 1 · 样本级溯源链：源数据与各算子以追加日志串成不可篡改的血缘链，最终产出不可变的数据集快照。</figcaption>
+</figure>
+
+<h2>27.3 PII检测与隐私保护</h2>
 
 <p>PII（个人身份信息）检测是数据安全的第一道防线。传统方法依赖正则表达式和规则引擎——可以准确识别身份证号、手机号、邮箱等结构化PII。但非结构化数据中的PII（如文本中提到的某人姓名和住址、对话中的个人经历描述）就超出了规则的能力范围。</p>
 
@@ -229,7 +458,7 @@
     <p>对于特别敏感的数据集（如医疗数据、金融交易数据），单纯脱敏可能还不够——攻击者可以通过多表关联重新识别个体。这时候就需要<strong>差分隐私</strong>（Differential Privacy）的保护。核心思想是在数据发布前注入校准噪声，使得攻击者无法判断某条数据是否存在于数据集中。在合成数据生成中，差分隐私被广泛应用——通过在生成模型的训练过程中加入DP保证（如DP-SGD算法），合成的数据既保留了原始数据的统计特征，又提供了严格的隐私保护。</p>
 </div>
 
-<h3>27.4 水印与数据溯源</h3>
+<h2>27.4 水印与数据溯源</h2>
 
 <p>数据水印是另一个前沿的数据保护技术。它的目标是：<strong>即使数据被复制、转换、泄漏，仍然能证明数据的归属和来源</strong>。</p>
 
@@ -287,7 +516,7 @@ def verify_watermark(dataset, dataset_id, secret_key):
         return "VERIFIED"
     return "SUSPICIOUS"</code></pre>
 
-<h3>27.5 质量监控与反馈闭环</h3>
+<h2>27.5 质量监控与反馈闭环</h2>
 
 <p>数据治理不是一次性的工作——数据质量会随着时间推移而退化。源数据格式可能变化、LLM API可能升级、业务需求可能调整，建立一个持续的<strong>质量监控与反馈闭环</strong>至关重要。</p>
 
@@ -359,7 +588,7 @@ class DataQualityMonitor:
     <strong>💡 反馈闭环设计思路</strong>：一个高效的反馈闭环应该是自动化的。"数据准备 → 模型训练 → 评估 → 数据调整"的循环周期越短，迭代效率就越高。在实践中，我们建议设置三级告警阈值：黄色告警（漂移超过阈值但仍在安全范围内，记录日志）、橙色告警（漂移显著，触发自动数据重准备流程）、红色告警（漂移严重，暂停自动流水线，需要人工介入）。
 </div>
 
-<h3>27.6 本章小结</h3>
+<h2>27.6 本章小结</h2>
 
 <p>数据治理、溯源与安全保障不是AI模型开发的"附加项"，而是与数据准备技术同等重要的基础设施。从溯源链的每一条审计记录，到PII检测的每一个实体识别，从水印技术的每一层保护，到质量监控的每一个告警阈值——这些构成了AI时代数据合规运营的完整骨架。在监管日益严格的大环境下，一个没有治理体系的数据准备系统，就像没有安全带的赛车——跑得再快，一个急转弯就可能车毁人亡。</p>
 
@@ -370,7 +599,7 @@ class DataQualityMonitor:
             <a href="index.html">📖 返回目录</a>
             <a href="28.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
