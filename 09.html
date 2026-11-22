@@ -4,12 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第9章 上下文感知清洗：LLMClean</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +241,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第9章 上下文感知清洗：LLMClean方法</h2>
+        <h1>第9章 上下文感知清洗：LLMClean方法</h1>
 
         <p>大家好，我是你们的讲师。上一章我们学会了用LLM发现数据中的错误——但发现问题只是第一步。真正的难点是：找到错误之后，怎么修？如果你直接对LLM说"把这个错误修掉"，它可能会给出一个语法正确但语义离谱的"修复"。这就是数据清洗中最棘手的挑战——缺乏上下文感知。这一章，我们来解剖LLMClean，一个将领域本体知识与LLM推理能力融合的上下文感知清洗框架。</p>
 
@@ -72,6 +272,36 @@
             <tr><td>典型例子</td><td>ZipCode → City（精确映射）</td><td>Symptom <sub>onto</sub>→ Diagnosis（语义关联）</td></tr>
         </table>
 
+        <figure id="fig-ofd">
+            <svg viewBox="0 0 920 320" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="ofdTitle ofdDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="ofdTitle">传统 FD 与本体功能依赖（OFD）的对比</title>
+                <desc id="ofdDesc">左侧为传统函数依赖：要求城市相同则邮编相同，由于北京不同区邮编不同，该依赖不成立。右侧为 OFD：城市通过地理编码本体关联到邮编前缀规则，允许合理的多值映射，同时能捕获“北京市 + 外地邮编”这类编码错误。</desc>
+                <defs><marker id="fdArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0d9488"/></marker></defs>
+                <line x1="450" y1="30" x2="450" y2="300" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6 6"/>
+                <text x="35" y="45" font-size="14" font-weight="600" fill="#475569" text-anchor="start">传统 FD：精确等值</text>
+                <rect x="35" y="80" width="165" height="52" rx="10" fill="#eef2ff" stroke="#6366f1"/>
+                <text x="117" y="112" font-size="13" fill="#3730a3">城市 = 北京市</text>
+                <line x1="200" y1="106" x2="270" y2="106" stroke="#6366f1" stroke-width="2" marker-end="url(#fdArrow)"/>
+                <rect x="280" y="80" width="140" height="52" rx="10" fill="#eef2ff" stroke="#6366f1"/>
+                <text x="350" y="112" font-size="13" fill="#3730a3">邮编 = ?</text>
+                <text x="35" y="168" font-size="12" fill="#334155" text-anchor="start">要求：城市相同 ⇒ 邮编相同</text>
+                <text x="35" y="196" font-size="12" fill="#dc2626" text-anchor="start">北京不同区邮编不同 ⇒ 依赖不成立 ✗</text>
+                <text x="35" y="232" font-size="12" fill="#64748b" text-anchor="start">例：北京市 100001 / 102200 均为合法</text>
+                <text x="485" y="45" font-size="14" font-weight="600" fill="#115e59" text-anchor="start">OFD：经本体的语义关联</text>
+                <rect x="470" y="80" width="120" height="52" rx="10" fill="#ecfeff" stroke="#0d9488"/>
+                <text x="530" y="112" font-size="13" fill="#115e59">城市=北京市</text>
+                <line x1="590" y1="106" x2="622" y2="106" stroke="#0d9488" stroke-width="2" marker-end="url(#fdArrow)"/>
+                <ellipse cx="682" cy="106" rx="56" ry="44" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+                <text x="682" y="101" font-size="13" font-weight="600" fill="#115e59">地理编码</text><text x="682" y="119" font-size="13" font-weight="600" fill="#115e59">本体</text>
+                <line x1="738" y1="106" x2="768" y2="106" stroke="#0d9488" stroke-width="2" marker-end="url(#fdArrow)"/>
+                <rect x="778" y="80" width="122" height="52" rx="10" fill="#ecfeff" stroke="#0d9488"/>
+                <text x="839" y="112" font-size="13" fill="#115e59">邮编 ^(10|102)</text>
+                <text x="485" y="168" font-size="12" fill="#334155" text-anchor="start">允许合理的多值映射（不同区不同邮编）</text>
+                <text x="485" y="196" font-size="12" fill="#059669" text-anchor="start">同时捕获“北京市 + 外地邮编”异物错误 ✓</text>
+            </svg>
+            <figcaption>图 1 · 传统 FD 要求列间精确等值，遇到“一城多区多邮编”就会失效；OFD 把领域本体当作中间层，允许近似依赖，同时保留对异物编码的敏感度。</figcaption>
+        </figure>
+
         <p>OFD的精髓在于：它不再要求列与列之间的精确函数依赖，而是将领域本体作为中间层，让LLM根据领域知识推断列与列之间"应该存在"的约束。例如，在医疗数据中，"症状"和"诊断"两个字段不存在严格的一对一映射，但领域本体告诉我们某些症状组合与特定诊断强相关——这就构成了一条OFD。</p>
 
         <h2>LLMClean系统架构</h2>
@@ -87,6 +317,30 @@
         <div class="tip">
             <strong>架构关键点：</strong>LLMClean并不是每次清洗都调用LLM。OFD的生成是一次性成本，生成之后的清洗阶段不需要LLM推理——这在实际应用中大幅降低了成本和延迟。LLM只在"规则生成"和"异常处理"两个环节出现。
         </div>
+
+        <figure id="fig-llmclean-arch">
+            <svg viewBox="0 0 900 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="archTitle archDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="archTitle">LLMClean 的三阶段清洗流水线</title>
+                <desc id="archDesc">输入为数据表、模式与领域本体。第一阶段本体分析、第二阶段 OFD 生成由 LLM 参与且只需一次；第三阶段规则驱动的清洗是纯规则执行，不再调用 LLM。</desc>
+                <defs><marker id="archArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7c3aed"/></marker></defs>
+                <rect x="170" y="14" width="320" height="46" rx="10" fill="#f5f3ff" stroke="#a78bfa"/>
+                <text x="330" y="42" font-size="13" fill="#4c1d95">输入：数据表 + 模式描述 + 领域本体</text>
+                <line x1="330" y1="60" x2="330" y2="92" stroke="#7c3aed" stroke-width="2" marker-end="url(#archArrow)"/>
+                <rect x="30" y="96" width="480" height="96" rx="14" fill="#faf5ff" stroke="#c4b5fd" stroke-width="2" stroke-dasharray="7 5"/>
+                <text x="270" y="90" font-size="12" fill="#7c3aed">LLM 参与（一次性）</text>
+                <rect x="50" y="116" width="200" height="58" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+                <text x="150" y="140" font-size="13" font-weight="600" fill="#4c1d95">① 本体分析</text><text x="150" y="160" font-size="11" fill="#5b21b6">字段语义 + 本体映射</text>
+                <line x1="250" y1="145" x2="288" y2="145" stroke="#7c3aed" stroke-width="2" marker-end="url(#archArrow)"/>
+                <rect x="296" y="116" width="200" height="58" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+                <text x="396" y="140" font-size="13" font-weight="600" fill="#4c1d95">② OFD 生成</text><text x="396" y="160" font-size="11" fill="#5b21b6">自动发现依赖</text>
+                <line x1="510" y1="145" x2="546" y2="145" stroke="#7c3aed" stroke-width="2" marker-end="url(#archArrow)"/>
+                <rect x="556" y="116" width="210" height="58" rx="10" fill="#ecfeff" stroke="#0d9488"/>
+                <text x="661" y="140" font-size="13" font-weight="600" fill="#115e59">③ 规则驱动清洗</text><text x="661" y="160" font-size="11" fill="#0f766e">CHECK / 函数，无 LLM</text>
+                <text x="661" y="196" font-size="11" fill="#0f766e">纯规则执行，零 LLM 调用</text>
+                <text x="450" y="240" font-size="12" fill="#475569">OFD 生成是一次性成本；清洗阶段不调用 LLM，因此成本与延迟可控</text>
+            </svg>
+            <figcaption>图 2 · LLMClean 的三阶段流水线：LLM 只出现在前两个阶段，产出的 OFD 转成可执行规则后，清洗阶段完全无需 LLM。</figcaption>
+        </figure>
 
         <h2>LLM生成OFD的流程</h2>
 
@@ -131,6 +385,8 @@ OFD2: sensor_type →onto→ unit
 
         <p>数据很说明问题：LLMClean的修复准确率稳定在88-92%之间，且OFD的数量（47-63条）远少于传统规则集动辄数百条，维护成本大幅降低。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">数据来源：<a href="https://arxiv.org/abs/2404.18681">LLMClean 论文（arXiv:2404.18681）</a>中报告的三领域评测结果；表中数值取自该论文，尚未独立复现。</p>
+
         <h3>实战案例：医疗数据中的邮政编码陷阱</h3>
 
         <p>这是一个从LLMClean论文中改编的真实案例。一家医院的数据集包含数万名患者的"城市"和"邮政编码"字段。传统FD方法在这个数据集上表现不佳，因为城市与邮编之间存在大量的例外情况——比如某些邮政编码覆盖多个城市，或者同一城市在不同时期有不同邮编。</p>
@@ -158,7 +414,7 @@ OFD2: sensor_type →onto→ unit
             <a href="10.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
