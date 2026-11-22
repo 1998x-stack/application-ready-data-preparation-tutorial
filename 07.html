@@ -4,12 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第7章 数据准备评估体系</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +241,9 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第7章 数据准备评估体系</h2>
+    </nav>
+    <main id="content" class="main-content">
+        <h1>第7章 数据准备评估体系</h1>
 
         <p>大家好，我是你们的讲师。过去五章，我们学习了从提示工程到微调的完整技术栈。但一个关键问题始终悬而未决：我们如何知道这些方法<strong>到底好不好</strong>？只看演示案例往往失真——演示时选的都是模型做对了的例子。真正的问题隐藏在那些模型做错的时候。</p>
 
@@ -139,7 +339,32 @@
                     <td>考量排序顺序加权的指标</td>
                 </tr>
             </tbody>
-        </table>
+        <figure id="fig-confusion">
+            <svg viewBox="0 0 820 360" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="cmTitle cmDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="cmTitle">混淆矩阵与核心指标的对应关系</title>
+                <desc id="cmDesc">二分类混淆矩阵：预测正且实际正为 TP，预测负而实际正为 FN（漏报），预测正而实际负为 FP（误报），预测负且实际负为 TN。Precision = TP/(TP+FP)，Recall = TP/(TP+FN)，F1 为二者的调和平均。</desc>
+                <text x="275" y="92" font-size="13" font-weight="600" fill="#334155">预测为正</text>
+                <text x="425" y="92" font-size="13" font-weight="600" fill="#334155">预测为负</text>
+                <text x="190" y="160" font-size="13" font-weight="600" fill="#334155" text-anchor="end">实际为正</text>
+                <text x="190" y="250" font-size="13" font-weight="600" fill="#334155" text-anchor="end">实际为负</text>
+                <rect x="200" y="110" width="150" height="90" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                <rect x="350" y="110" width="150" height="90" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                <rect x="200" y="200" width="150" height="90" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                <rect x="350" y="200" width="150" height="90" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                <text x="275" y="150" font-size="16" font-weight="700" fill="#14532d">TP</text><text x="275" y="172" font-size="11" fill="#166534">命中</text>
+                <text x="425" y="150" font-size="16" font-weight="700" fill="#92400e">FN</text><text x="425" y="172" font-size="11" fill="#b45309">漏报</text>
+                <text x="275" y="240" font-size="16" font-weight="700" fill="#92400e">FP</text><text x="275" y="262" font-size="11" fill="#b45309">误报</text>
+                <text x="425" y="240" font-size="16" font-weight="700" fill="#14532d">TN</text><text x="425" y="262" font-size="11" fill="#166534">正确拒绝</text>
+                <g text-anchor="start" font-size="13" fill="#4c1d95">
+                    <text x="540" y="150" font-weight="600">Precision = TP / (TP + FP)</text>
+                    <text x="540" y="185" font-weight="600">Recall = TP / (TP + FN)</text>
+                    <text x="540" y="220" font-weight="600">F1 = 2PR / (P + R)</text>
+                </g>
+                <text x="540" y="255" font-size="11" fill="#64748b" text-anchor="start">FP 高 ⇒ Precision 低</text>
+                <text x="540" y="275" font-size="11" fill="#64748b" text-anchor="start">FN 高 ⇒ Recall 低</text>
+            </svg>
+            <figcaption>图 1 · 混淆矩阵与指标对应：Precision 关注误报（FP），Recall 关注漏报（FN），F1 是两者的调和平均，所以只看 F1 会掩盖偏向哪一侧。</figcaption>
+        </figure>
 
         <p>在实践中，对于大多数数据准备任务，F1-score是最核心的单一指标。但有两个重要补充：</p>
         <ol>
@@ -333,6 +558,30 @@ print(f"差异显著: {result['significant']} (p={result['p_value']:.4f})")</cod
             <p><strong>实验设计检查清单：</strong> 1) 测试集与训练/验证集完全无交叉；2) ICL示例来自训练集，非测试集；3) 至少使用2个独立数据集做评估；4) 报告置信区间或p-value；5) 消融实验确认每个组件的贡献；6) 基线方法使用与你的方法相同的评估框架；7) 在最终report之前，不要用测试集调优任何参数。</p>
         </div>
 
+        <figure id="fig-split-leak">
+            <svg viewBox="0 0 900 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="slTitle slDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="slTitle">数据划分与 ICL 示例选取的泄漏风险</title>
+                <desc id="slDesc">数据划分为训练集 60%、验证集 20%、测试集 20%。正确做法是 ICL 示例取自训练集；错误做法是从测试集选取示例，会构成数据泄漏，使离线评估虚高。</desc>
+                <defs><marker id="slArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/></marker></defs>
+                <rect x="40" y="70" width="480" height="56" fill="#dbeafe" stroke="#2563eb"/>
+                <rect x="520" y="70" width="160" height="56" fill="#fef3c7" stroke="#d97706"/>
+                <rect x="680" y="70" width="140" height="56" fill="#fee2e2" stroke="#ef4444"/>
+                <text x="280" y="103" font-size="13" font-weight="600" fill="#1e3a8a">训练集 60%</text>
+                <text x="600" y="103" font-size="12" font-weight="600" fill="#92400e">验证集 20%</text>
+                <text x="750" y="103" font-size="12" font-weight="600" fill="#991b1b">测试集 20%</text>
+                <line x1="280" y1="126" x2="280" y2="178" stroke="#64748b" stroke-width="2" marker-end="url(#slArrow)"/>
+                <line x1="750" y1="126" x2="750" y2="178" stroke="#ef4444" stroke-width="2" marker-end="url(#slArrow)"/>
+                <rect x="150" y="182" width="260" height="54" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                <text x="280" y="206" font-size="12" font-weight="600" fill="#14532d">ICL 示例取自训练集 ✓</text>
+                <text x="280" y="226" font-size="11" fill="#166534">离线分数可信</text>
+                <rect x="620" y="182" width="260" height="54" rx="12" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="750" y="206" font-size="12" font-weight="600" fill="#991b1b">ICL 示例取自测试集 ✗</text>
+                <text x="750" y="226" font-size="11" fill="#b91c1c">数据泄漏，离线评估虚高</text>
+                <text x="430" y="272" font-size="12" fill="#475569">ICL 示例只能来自训练集；用测试集选示例会直接污染评估</text>
+            </svg>
+            <figcaption>图 2 · 数据划分与 ICL 示例的来源：训练/验证/测试三分后，示例必须取自训练集，否则会形成数据泄漏，让离线分数失去参考价值。</figcaption>
+        </figure>
+
         <h2>实战案例：高F1却生产翻车</h2>
 
         <p>最后，分享一个我自己犯过的严重错误。2023年底，我为一个电商平台的商品匹配系统开发了一个实体匹配模型。在离线评估中，模型在WDC Products测试集上取得了F1=0.95的优异成绩。团队信心满满地部署到生产环境。结果上线第一天就翻车了——匹配准确率只有62%，远低于离线测试的95%。</p>
@@ -401,7 +650,7 @@ print("解决方案：按业务占比加权的weighted-F1 + 实际分布下的�
             <a href="index.html">📖 返回目录</a>
             <a href="08.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
