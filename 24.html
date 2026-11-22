@@ -4,12 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第24章 数据混合法则与域选择</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +241,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
+        <h1>第24章 数据混合法则与域选择</h1>
         <h2>数据混合为什么是一门科学</h2>
 
         <p>大家好，我是你们的讲师。上章我们把数据去重和过滤做到了极致，得到了一堆干干净净、高高质量的文档。现在问题来了：这些文档来自网页、书籍、代码、论文、百科——我们应该按什么比例把它们混在一起训练？</p>
@@ -95,6 +296,26 @@
         <p>GEM 的核心洞察是：数据域之间的关系可以用几何结构来刻画。每个数据域可以视为高维空间中的一个点，域之间的"距离"由它们的文本分布差异决定。最优混合比例就是在这个几何空间中找到一个点，使得各个方向上的"信息熵"达到均衡。</p>
 
         <p>数学上，GEM 将数据混合问题形式化为在概率单纯形（probability simplex）上的优化：</p>
+
+        <figure id="fig-simplex">
+            <svg viewBox="0 0 760 420" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="simTitle simDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="simTitle">概率单纯形上的数据混合比例</title>
+                <desc id="simDesc">三角形的三个顶点分别代表网页、代码、书籍三个数据域。三角形内部的任意一点对应一组非负且总和为 1 的混合比例，三个权重之和恒为 1。图中点标注为一组示例配比（教学示意）。</desc>
+                <polygon points="380,70 110,360 650,360" fill="#faf5ff" stroke="#8b5cf6" stroke-width="2.5"/>
+                <line x1="326" y1="302" x2="380" y2="70" stroke="#c4b5fd" stroke-dasharray="6 5"/>
+                <line x1="326" y1="302" x2="110" y2="360" stroke="#c4b5fd" stroke-dasharray="6 5"/>
+                <line x1="326" y1="302" x2="650" y2="360" stroke="#c4b5fd" stroke-dasharray="6 5"/>
+                <circle cx="326" cy="302" r="8" fill="#7c3aed"/>
+                <text x="380" y="55" font-size="14" font-weight="600" fill="#4c1d95">书籍域</text>
+                <text x="95" y="380" font-size="14" font-weight="600" fill="#4c1d95">网页域</text>
+                <text x="655" y="380" font-size="14" font-weight="600" fill="#4c1d95">代码域</text>
+                <text x="345" y="290" font-size="12" fill="#5b21b6" text-anchor="start">权重 (0.5, 0.3, 0.2)</text>
+                <text x="380" y="210" font-size="12" fill="#64748b">任一点对应一组混合比例</text>
+                <text x="380" y="232" font-size="12" fill="#64748b">三个权重非负且总和为 1</text>
+                <text x="380" y="405" font-size="12" fill="#94a3b8">教学示意 · 顶点为三个数据域，本图不代表真实实验数值。</text>
+            </svg>
+            <figcaption>图 1 · 数据混合比例的几何刻画：三个域构成概率单纯形的顶点，一组混合比例就是三角形内的一个点；GEM 寻找的是使各方向信息熵均衡的那个点。</figcaption>
+        </figure>
 
         <pre><code># GEM：几何熵混合——简化伪代码
 
@@ -160,6 +381,28 @@ def gem_optimal_mix(domain_embeddings, lambda_reg=0.1):
         <div class="tip">
             <strong>实践建议：</strong> 如果你在做一个新的预训练项目，建议的混合策略探索顺序是：(1) 先用 RegMix 做小规模实验找到粗粒度的最优配比；(2) 用 GEM 进行理论验证和微调；(3) 在训练过程中用 DoReMi 风格的动态重加权做实时修正。三层叠加往往能产生最好的效果。
         </div>
+
+        <figure id="fig-mixing-order">
+            <svg viewBox="0 0 900 230" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="ordTitle ordDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="ordTitle">数据混合策略的三层探索顺序</title>
+                <desc id="ordDesc">先用 RegMix 做小规模实验找到粗粒度最优配比，再用 GEM 进行理论验证与微调，最后在训练过程中用 DoReMi 风格动态重加权做实时修正。</desc>
+                <defs><marker id="ordArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7c3aed"/></marker></defs>
+                <rect x="30" y="70" width="240" height="90" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="150" y="100" font-size="14" font-weight="600" fill="#4c1d95">① RegMix</text>
+                <text x="150" y="124" font-size="11" fill="#5b21b6">小规模实验</text><text x="150" y="144" font-size="11" fill="#64748b">找粗粒度最优配比</text>
+                <rect x="330" y="70" width="240" height="90" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                <text x="450" y="100" font-size="14" font-weight="600" fill="#1e3a8a">② GEM</text>
+                <text x="450" y="124" font-size="11" fill="#1d4ed8">理论验证</text><text x="450" y="144" font-size="11" fill="#64748b">几何熵微调配比</text>
+                <rect x="630" y="70" width="240" height="90" rx="14" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+                <text x="750" y="100" font-size="14" font-weight="600" fill="#115e59">③ DoReMi</text>
+                <text x="750" y="124" font-size="11" fill="#0f766e">训练中动态重加权</text><text x="750" y="144" font-size="11" fill="#64748b">实时修正域权重</text>
+                <line x1="270" y1="115" x2="326" y2="115" stroke="#7c3aed" stroke-width="2" marker-end="url(#ordArrow)"/>
+                <line x1="570" y1="115" x2="626" y2="115" stroke="#7c3aed" stroke-width="2" marker-end="url(#ordArrow)"/>
+                <text x="450" y="30" font-size="13" fill="#4c1d95">建议的探索顺序：先粗后细，最后在训练中动态修正</text>
+                <text x="450" y="200" font-size="12" fill="#475569">三层叠加，通常比单一方法更稳健</text>
+            </svg>
+            <figcaption>图 2 · 数据混合策略的三层探索顺序：RegMix 定粗粒度配比，GEM 做理论验证，DoReMi 在训练中动态修正。</figcaption>
+        </figure>
 
         <h2>域选择与持续预训练</h2>
 
@@ -249,7 +492,7 @@ def d_cpt_law(model_size, domain_data_size, general_data_size):
             <a href="index.html">📖 返回目录</a>
             <a href="25.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
