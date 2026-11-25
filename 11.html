@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第11章 数据填补与缺失值修复</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +239,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第11章 数据填补与缺失值修复</h2>
+        <h1>第11章 数据填补与缺失值修复</h1>
 
         <p>大家好，我是你们的讲师。前三章我们都在讨论"错误检测"——找到数据里的坏东西。但数据还有一种令人头疼的"不完整"状态：值直接不存在。缺失值是数据质量的老大难问题，在真实工业数据集中，缺失率超过30%的数据集比比皆是。传统的均值填充、最邻近填充往往过于粗糙，而模型预测填充又需要大量标注数据。这一章我们来看看LLM如何为缺失值填补带来全新的思路。</p>
 
@@ -64,6 +262,36 @@
         <div class="warning">
             <strong>踩坑实录：</strong>一家智能穿戴设备公司在处理用户心率数据时，发现大量缺失值集中出现在夜间时段。数据团队用线性插值进行了填补，但结果导致模型预测的"夜间平均心率"系统性偏低。原因分析表明：缺失不是随机的——用户在夜间摘下设备充电导致数据缺失，而睡眠中的心率本来就会降低。插值法假设了"缺失前后的线性关系"，而实际数据完全打破了这一假设。这种由缺失机制误判导致的偏差，在后续模型训练中被放大了3倍。
         </div>
+
+        <figure id="fig-missing-types">
+            <svg viewBox="0 0 860 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="mtTitle mtDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="mtTitle">缺失机制三种类型：MCAR / MAR / MNAR</title>
+                <desc id="mtDesc">MCAR 的缺失与任何变量无关；MAR 的缺失依赖其他已观测变量；MNAR 的缺失依赖缺失变量自身的取值。</desc>
+                <rect x="0" y="0" width="860" height="250" fill="#faf8ff"/>
+                <g text-anchor="middle">
+                    <rect x="35" y="50" width="245" height="170" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                    <text x="157" y="82" font-size="15" font-weight="700" fill="#0f766e">MCAR</text>
+                    <text x="157" y="106" font-size="12" fill="#64748b">完全随机缺失</text>
+                    <text x="157" y="140" font-size="14" font-weight="700" fill="#334155">缺失 ⊥ 任何变量</text>
+                    <text x="157" y="170" font-size="12" fill="#64748b">传感器随机断电丢读数</text>
+                    <text x="157" y="198" font-size="12" fill="#0f766e">处理难度：低</text>
+                    <rect x="308" y="50" width="245" height="170" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                    <text x="430" y="82" font-size="15" font-weight="700" fill="#6d28d9">MAR</text>
+                    <text x="430" y="106" font-size="12" fill="#64748b">随机缺失</text>
+                    <text x="430" y="140" font-size="14" font-weight="700" fill="#334155">缺失 ← 其他观测变量 Z</text>
+                    <text x="430" y="170" font-size="12" fill="#64748b">高收入人群更少填收入</text>
+                    <text x="430" y="198" font-size="12" fill="#6d28d9">处理难度：中</text>
+                    <rect x="581" y="50" width="245" height="170" rx="14" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                    <text x="703" y="82" font-size="15" font-weight="700" fill="#c2410c">MNAR</text>
+                    <text x="703" y="106" font-size="12" fill="#9a3412">非随机缺失</text>
+                    <text x="703" y="140" font-size="14" font-weight="700" fill="#334155">缺失 ← 缺失变量 Y 自身</text>
+                    <text x="703" y="170" font-size="12" fill="#9a3412">故障设备关闭了自身传感器</text>
+                    <text x="703" y="198" font-size="12" fill="#c2410c">处理难度：高</text>
+                </g>
+                <text x="430" y="32" font-size="12" fill="#6d28d9">缺失机制决定填补策略；机制误判会使任何高级填补方法南辕北辙</text>
+            </svg>
+            <figcaption>图 11-1　缺失机制的三种类型。MCAR 与任何变量无关，MAR 依赖其他可观测变量，MNAR 依赖缺失变量自身的取值。均值/插值/回归填补分别隐含了 MCAR 或 MAR 假设，一旦真实机制是 MNAR，填补就会产生系统性偏差。</figcaption>
+        </figure>
 
         <h2>LLM作为缺失值预测器</h2>
 
@@ -89,6 +317,8 @@
 你的推断格式：[职业名称] | 置信度(高/中/低) | 推断依据</code></pre>
 
         <p>LLM的输出通常是合理的语义推断。在实验中，对于"基于上下文的分类型缺失"，LLM填补的准确率可以达到85%以上，远高于众数填充(约45%)和回归填充(约62%)。</p>
+
+        <p><strong>标注说明：</strong>这里与下文出现的准确率、RMSE 降幅、AUC 等具体数字为教学示意，用于展示不同填补路线的相对优劣量级，并非来自单一公开基准的官方榜单；实际数值随数据集与任务定义而变。</p>
 
         <h2>LLM-Forest集成方法</h2>
 
@@ -126,6 +356,42 @@
 
         <p>高阶消息传递填补在混合类型数据上表现出色。一个基准测试显示，在包含数值、分类、文本和日期字段的数据集上，该方法相比传统的MissForest（基于随机森林的填补）将RMSE降低了约37%，分类准确率提升了22%。</p>
 
+        <p><strong>标注说明：</strong>上述 37% / 22% 为教学示意量级，用于说明高阶消息传递在混合类型数据上的相对优势，不是某篇论文的同条件实测值。</p>
+
+        <figure id="fig-message-passing">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="mpTitle mpDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="mpTitle">高阶消息传递填补：行内与列内传播</title>
+                <desc id="mpDesc">目标缺失值同时接收同一行的其他列、同一列的其他行，以及相似行的高阶消息，再由 LLM 聚合成最终填补值。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <g fill="#eef2ff" stroke="#c7d2fe">
+                    <rect x="130" y="80" width="30" height="30"/><rect x="160" y="80" width="30" height="30"/><rect x="190" y="80" width="30" height="30"/><rect x="220" y="80" width="30" height="30"/>
+                    <rect x="130" y="110" width="30" height="30"/><rect x="190" y="110" width="30" height="30"/><rect x="220" y="110" width="30" height="30"/>
+                    <rect x="130" y="140" width="30" height="30"/><rect x="160" y="140" width="30" height="30"/><rect x="190" y="140" width="30" height="30"/><rect x="220" y="140" width="30" height="30"/>
+                    <rect x="130" y="170" width="30" height="30"/><rect x="160" y="170" width="30" height="30"/><rect x="190" y="170" width="30" height="30"/><rect x="220" y="170" width="30" height="30"/>
+                </g>
+                <rect x="160" y="110" width="30" height="30" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+                <text x="175" y="131" font-size="14" font-weight="700" fill="#ffffff">?</text>
+                <defs><marker id="mpArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker>
+                    <marker id="mpArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#7c3aed"/></marker></defs>
+                <g stroke="#0d9488" stroke-width="1.6" fill="none">
+                    <path d="M148 125 H157" marker-end="url(#mpArrow)"/><path d="M208 125 H193" marker-end="url(#mpArrow)"/><path d="M237 125 H193" marker-end="url(#mpArrow)"/>
+                    <path d="M175 98 V107" marker-end="url(#mpArrow)"/><path d="M175 158 V143" marker-end="url(#mpArrow)"/><path d="M175 188 V143" marker-end="url(#mpArrow)"/>
+                </g>
+                <text x="175" y="62" font-size="12" fill="#0f766e">列内传播</text>
+                <text x="80" y="125" font-size="12" fill="#0f766e" text-anchor="end">行内传播</text>
+                <rect x="470" y="95" width="180" height="70" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="560" y="125" font-size="13" font-weight="700" fill="#6d28d9">相似行的高阶消息</text>
+                <text x="560" y="147" font-size="12" fill="#64748b">年龄/收入相近的用户的已知列</text>
+                <path d="M470 130 C380 130 300 125 195 125" fill="none" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#mpArrow2)"/>
+                <rect x="700" y="95" width="130" height="70" rx="12" fill="#0d9488"/>
+                <text x="765" y="125" font-size="13" font-weight="700" fill="#ffffff">LLM 聚合</text>
+                <text x="765" y="147" font-size="12" fill="#ccfbf1">加权得出填补值</text>
+                <path d="M650 130 H698" stroke="#0d9488" stroke-width="2" marker-end="url(#mpArrow)"/>
+                <text x="430" y="250" font-size="12" fill="#64748b">缺失值的信息不只来自同列，还来自同行、以及跨行跨列的高阶关系</text>
+            </svg>
+            <figcaption>图 11-2　高阶消息传递填补。目标缺失单元格同时接收行内、列内与相似行的高阶消息，每条消息附带来源与置信度，最后由 LLM 加权聚合。信息源越丰富，在混合类型数据上的填补越准。</figcaption>
+        </figure>
+
         <h3>实战案例：填补方法好坏差30%预测精度</h3>
 
         <p>这是一个来自金融风控领域的真实案例。一家消费金融公司需要构建客户违约预测模型，但他们的训练数据存在严重的缺失问题——在一些关键字段上缺失率高达40%。</p>
@@ -133,6 +399,8 @@
         <p>他们首先尝试了最简单的<strong>均值填充</strong>：将缺失的"收入"字段直接替换为全量用户的平均收入。模型训练完成后，在测试集上的AUC为0.71。然后尝试了<strong>回归填充</strong>：用已知的收入数据和其他特征训练一个预测模型来填充缺失值。AUC提升到了0.78。</p>
 
         <p>最后，他们采用了基于LLM的<strong>上下文感知填补</strong>：不仅用数值特征，还利用了用户填写的文本描述（如职业描述、借款原因）来推断收入水平。AUC达到了0.84。更重要的是，<strong>高收入用户的识别率（模型最关注的人群）从52%提升到了79%</strong>。</p>
+
+        <p><strong>标注说明：</strong>本案例中的 AUC（0.71 / 0.78 / 0.84）与识别率（52% / 79%）为教学示意数字，用于说明“填补质量”对下游模型区分度的影响，不代表已公开发表的审计结论。</p>
 
         <div class="highlight">
             <strong>教训总结：</strong>在这个案例中，均值填充实际上"拉平"了用户之间的差异，导致模型失去了区分度。回归填充好一些，但仍然受限于特征工程的质量。LLM填补的最大价值在于，它<strong>释放了文本数据中的信息量</strong>——传统方法无法利用的那些"非结构化信号"，恰恰是区分用户风险的关键。三种填补方法在同一个模型框架下的最终预测精度差距超过30%，这就是"填补质量"的威力。
@@ -146,7 +414,7 @@
             <a href="12.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
