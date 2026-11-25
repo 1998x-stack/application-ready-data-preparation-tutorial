@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第14章 端到端清洗工作流自动化</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +239,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第14章 端到端清洗工作流自动化</h2>
+        <h1>第14章 端到端清洗工作流自动化</h1>
 
         <p>大家好，我是你们的讲师。从第8章到第13章，我们像搭积木一样，逐一构建了错误检测、上下文感知清洗、零样本检测、缺失值填补、函数合成清洗和异常检测这些能力模块。现在是时候把这些积木拼成一个完整的自动化流水线了。这一章的主题是<strong>端到端清洗工作流自动化</strong>——让LLM从"单个任务的执行者"升级为"整个清洗流程的编排者"。</p>
 
@@ -119,6 +317,33 @@
   ]
 }</code></pre>
 
+        <figure id="fig-autodc">
+            <svg viewBox="0 0 860 260" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="adTitle adDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="adTitle">AutoDCWorkflow 的工作流程</title>
+                <desc id="adDesc">先对数据集做画像生成质量报告，再由 LLM 生成包含操作节点的 DAG 工作流，交由执行引擎逐节点运行，并把结果反馈用于调参。</desc>
+                <rect x="0" y="0" width="860" height="260" fill="#faf8ff"/>
+                <rect x="30" y="85" width="210" height="85" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="135" y="118" font-size="13" font-weight="700" fill="#0f766e">① 数据画像</text>
+                <text x="135" y="140" font-size="12" fill="#64748b">缺失率 / 异常值 / 类型</text>
+                <text x="135" y="158" font-size="12" fill="#64748b">列间相关性</text>
+                <rect x="325" y="85" width="210" height="85" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="430" y="118" font-size="13" font-weight="700" fill="#6d28d9">② 工作流生成（LLM）</text>
+                <text x="430" y="140" font-size="12" fill="#64748b">生成 DAG 操作节点</text>
+                <text x="430" y="158" font-size="12" fill="#64748b">类型 / 字段 / 参数</text>
+                <rect x="620" y="85" width="210" height="85" rx="12" fill="#7c3aed"/>
+                <text x="725" y="118" font-size="13" font-weight="700" fill="#ffffff">③ 工作流执行</text>
+                <text x="725" y="140" font-size="12" fill="#ede9fe">执行引擎逐节点运行</text>
+                <text x="725" y="158" font-size="12" fill="#ede9fe">结果反馈回 LLM</text>
+                <defs><marker id="adArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="adArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f97316"/></marker></defs>
+                <path d="M240 128 H322" stroke="#94a3b8" stroke-width="2" marker-end="url(#adArrow)"/>
+                <path d="M535 128 H617" stroke="#94a3b8" stroke-width="2" marker-end="url(#adArrow)"/>
+                <path d="M725 170 V215 H430 V173" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#adArrow2)"/>
+                <text x="577" y="237" font-size="12" fill="#c2410c">执行结果反馈 → 动态调整后续节点参数</text>
+            </svg>
+            <figcaption>图 14-1　AutoDCWorkflow 的工作流程。先由数据画像产出质量报告，再由 LLM 依报告生成 DAG 工作流，执行引擎逐节点运行并把结果反馈回模型，用于动态调整后续参数。</figcaption>
+        </figure>
+
         <h2>GIDCL图迭代清洗</h2>
 
         <p>AutoDCWorkflow生成的是一条"线性"或"DAG"工作流，但实际数据清洗中，很多问题不是一次性能解决的。清洗一个字段可能会暴露其他字段的新问题，修复一个表之后可能发现关联表也需要同步修复。<strong>GIDCL（Graph-based Iterative Data Cleaning with LLMs）</strong>采用了一种更有野心的方案：把清洗看作一个图上的迭代过程。</p>
@@ -128,6 +353,30 @@
         <div class="highlight">
             <strong>核心创新点：</strong>GIDCL的图迭代设计解决了传统清洗流水线中的一个根本问题——"清洗顺序依赖"。例如，在传统流水线中，如果先做"收入异常值修复"再做"职业缺失值填补"，收入修复可能会把一些低收入者的收入修高，导致后续的职业填补基于错误的收入数据做推断。GIDCL通过迭代清洗规避了这种顺序偏差：每一轮只修复置信度最高的节点，逐步扩大清洗范围。
         </div>
+
+        <figure id="fig-gidcl">
+            <svg viewBox="0 0 860 240" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="gdTitle gdDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="gdTitle">GIDCL 的图迭代清洗循环</title>
+                <desc id="gdDesc">每轮只选置信度最高的节点清洗，再更新邻居状态并重估置信度，循环推进以规避清洗顺序依赖。</desc>
+                <rect x="0" y="0" width="860" height="240" fill="#faf8ff"/>
+                <rect x="35" y="85" width="225" height="80" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="147" y="118" font-size="13" font-weight="700" fill="#0f766e">① 选置信度最高节点</text>
+                <text x="147" y="140" font-size="12" fill="#64748b">只修复最可靠的部分</text>
+                <rect x="317" y="85" width="225" height="80" rx="12" fill="#7c3aed"/>
+                <text x="430" y="118" font-size="13" font-weight="700" fill="#ffffff">② LLM 清洗并更新邻居</text>
+                <text x="430" y="140" font-size="12" fill="#ede9fe">图上传清洗信息</text>
+                <rect x="600" y="85" width="225" height="80" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="712" y="118" font-size="13" font-weight="700" fill="#6d28d9">③ 重估节点置信度</text>
+                <text x="712" y="140" font-size="12" fill="#64748b">邻居置信度提升</text>
+                <defs><marker id="gdArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="gdArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M260 125 H314" stroke="#94a3b8" stroke-width="2" marker-end="url(#gdArrow)"/>
+                <path d="M542 125 H597" stroke="#94a3b8" stroke-width="2" marker-end="url(#gdArrow)"/>
+                <path d="M712 165 V200 H147 V167" fill="none" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#gdArrow2)"/>
+                <text x="430" y="222" font-size="12" fill="#6d28d9">逐轮推进，避免“先修收入、再填职业”这类顺序依赖带来的偏差</text>
+            </svg>
+            <figcaption>图 14-2　GIDCL 的图迭代清洗循环。每轮只清洗当下置信度最高的节点，再把结果传播给邻居并重估置信度，循环推进；这种迭代方式规避了线性流水线中“清洗顺序依赖”带来的偏差。</figcaption>
+        </figure>
 
         <h2>人机协同的清洗模式</h2>
 
@@ -158,6 +407,8 @@
 
         <p>效果非常显著：清洗时间从平均2天（手工）缩短到了20分钟（自动化），数据交付时间从周三提前到了周一当天。更让人意外的是，自动化系统发现的错误数量比人工发现的多了约3倍——LLM在检测"人眼容易漏掉的微小异常"上展现出了超出人类的表现。</p>
 
+        <p><strong>标注说明：</strong>本案例中的清洗时长（2 天 → 20 分钟）、错误数量倍数（约 3 倍）以及前文提到的 50 万元差异、80% 手动工作量削减等具体数字，均为教学示意，用于说明自动化带来的量级变化，并非经审计的公开统计结果。</p>
+
         <div class="highlight">
             <strong>关键配置细节：</strong>该系统采用了"分级审核"策略。第一级（格式清洗和类型转换）完全自动，无需人工。第二级（异常值检测和缺失填补）自动执行但生成审核报告，由数据分析师在每天上午花15分钟快速确认。第三级（跨源一致性冲突）自动标记，每周一上午由数据团队集体讨论。这个分级设计让团队每周的总工作量从约3天降到了不到2小时。
         </div>
@@ -172,7 +423,7 @@
             <a href="15.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
