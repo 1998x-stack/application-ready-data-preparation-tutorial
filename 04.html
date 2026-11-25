@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第4章 提示工程用于数据任务</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +239,9 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第4章 提示工程用于数据任务</h2>
+    </nav>
+    <main id="content" class="main-content">
+        <h1>第4章 提示工程用于数据任务</h1>
 
         <p>大家好，我是你们的讲师。上一章我们介绍了LLM作为通用数据操作符的强大能力——一个模型、一个接口、覆盖几乎所有数据准备任务。然而，接口的统一并不等于效果的统一。同样一个LLM，不同的人写出不同的提示，输出的质量可能天差地别。我见过有人用三行提示就完成了复杂的实体匹配，也见过有人写了长篇大论的提示却得到一堆格式错乱的输出。</p>
 
@@ -69,6 +267,41 @@
         <div class="tip">
             <p><strong>数据任务提示第一原则：</strong> 永远假设LLM会在你未明确指定的地方发挥"创意"。你必须在提示中对<strong>所有可能产生歧义的地方</strong>给出明确约束。一个好的数据任务提示，读起来应该像一份技术规范文档，而不是一场对话。</p>
         </div>
+
+        <figure id="fig-prompt-anatomy">
+            <svg viewBox="0 0 860 340" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="paTitle paDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="paTitle">数据任务提示的解剖结构</title>
+                <desc id="paDesc">提示由 Schema 定义、清洗规则、输入数据和输出格式约束四部分构成，经 LLM 处理后产出可被程序消费的结构化结果。</desc>
+                <rect x="0" y="0" width="860" height="340" fill="#faf8ff"/>
+                <text x="200" y="38" font-size="15" font-weight="700" fill="#6d28d9">数据任务提示的四要素</text>
+                <g font-size="13" fill="#334155">
+                    <rect x="40" y="55" width="320" height="50" rx="10" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="76" font-weight="700" fill="#6d28d9">① Schema 定义</text>
+                    <text x="200" y="95" font-size="12">先固定输出字段名与类型</text>
+                    <rect x="40" y="111" width="320" height="50" rx="10" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="132" font-weight="700" fill="#6d28d9">② 清洗规则</text>
+                    <text x="200" y="151" font-size="12">每条规则可执行、无歧义</text>
+                    <rect x="40" y="167" width="320" height="50" rx="10" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="188" font-weight="700" fill="#6d28d9">③ 输入数据</text>
+                    <text x="200" y="207" font-size="12">待处理的记录 / 文本</text>
+                    <rect x="40" y="223" width="320" height="50" rx="10" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="244" font-weight="700" fill="#6d28d9">④ 输出格式约束</text>
+                    <text x="200" y="263" font-size="12">仅输出 JSON，禁止额外文字</text>
+                </g>
+                <defs><marker id="paArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#a78bfa"/></marker></defs>
+                <path d="M365 175 H438" stroke="#a78bfa" stroke-width="2" marker-end="url(#paArrow)"/>
+                <rect x="445" y="115" width="165" height="115" rx="14" fill="#7c3aed"/>
+                <text x="527" y="165" font-size="15" font-weight="700" fill="#ffffff">LLM 操作符</text>
+                <text x="527" y="190" font-size="12" fill="#ede9fe">按规范生成</text>
+                <path d="M610 175 H678" stroke="#0d9488" stroke-width="2" marker-end="url(#paArrow2)"/>
+                <defs><marker id="paArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <rect x="685" y="115" width="150" height="115" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="760" y="160" font-size="14" font-weight="700" fill="#0f766e">结构化 JSON</text>
+                <text x="760" y="182" font-size="12" fill="#64748b">status / cleaned</text>
+                <text x="760" y="200" font-size="12" fill="#64748b">changes / confidence</text>
+            </svg>
+            <figcaption>图 4-1　数据任务提示的解剖结构。与开放对话不同，数据任务提示读起来更像一份技术规范：先固定输出 Schema，再给出可执行规则、待处理数据与严格的格式约束，最终产出下游程序可直接消费的结构化结果。</figcaption>
+        </figure>
 
         <h2>Chain-of-Thought用于数据推理</h2>
 
@@ -210,6 +443,8 @@ prompt = """
             </tbody>
         </table>
 
+        <p><strong>标注说明：</strong>表中各策略的"效果提升"为教学示意区间，用于说明不同策略大致的相对收益量级，并非来自某单一论文的同条件实测数字；实际增益随任务类型、模型规模与数据分布而变。后续章节会给出带具体评测基准与指标的讨论。</p>
+
         <p>自纠正是最实用的策略之一。它的实现非常简单——只需要在第一次输出后追加一条指令：</p>
 
         <pre><code># 自纠正模式示例
@@ -241,6 +476,37 @@ def self_correcting_clean(llm, data, cleaning_prompt):
     return final_result if final_result != "OK" else initial_result</code></pre>
 
         <p>自纠正策略的效果取决于模型的"自我认知"能力。实验表明，Claude 3.5 Sonnet及以上级别的模型在自纠正中表现良好，而较小的模型（7B级别）自纠正时往往"自信地坚持错误"。</p>
+
+        <figure id="fig-selfcorrect">
+            <svg viewBox="0 0 860 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="scTitle scDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="scTitle">两轮自纠正清洗流程</title>
+                <desc id="scDesc">第一轮生成初始清洗结果，第二轮让模型回看原始数据与初版输出，发现问题则输出修正版，否则保留初版。</desc>
+                <rect x="0" y="0" width="860" height="280" fill="#faf8ff"/>
+                <rect x="35" y="95" width="160" height="90" rx="14" fill="#7c3aed"/>
+                <text x="115" y="135" font-size="14" font-weight="700" fill="#ffffff">第 1 轮</text>
+                <text x="115" y="158" font-size="12" fill="#ede9fe">初始清洗</text>
+                <defs><marker id="scArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#a78bfa"/></marker>
+                    <marker id="scArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <path d="M195 140 H240" stroke="#a78bfa" stroke-width="2" marker-end="url(#scArrow)"/>
+                <rect x="245" y="95" width="160" height="90" rx="14" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="2"/>
+                <text x="325" y="135" font-size="14" font-weight="700" fill="#6d28d9">初步结果</text>
+                <text x="325" y="158" font-size="12" fill="#64748b">可能含错误/不一致</text>
+                <path d="M405 140 H450" stroke="#a78bfa" stroke-width="2" marker-end="url(#scArrow)"/>
+                <rect x="455" y="95" width="180" height="90" rx="14" fill="#0d9488"/>
+                <text x="545" y="135" font-size="14" font-weight="700" fill="#ffffff">第 2 轮</text>
+                <text x="545" y="158" font-size="12" fill="#ccfbf1">回看原始数据并检查</text>
+                <path d="M635 125 H690" stroke="#0d9488" stroke-width="2" marker-end="url(#scArrow2)"/>
+                <path d="M635 160 H690" stroke="#0d9488" stroke-width="2" marker-end="url(#scArrow2)"/>
+                <rect x="695" y="60" width="140" height="62" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="765" y="88" font-size="13" font-weight="700" fill="#c2410c">发现问题</text>
+                <text x="765" y="108" font-size="12" fill="#9a3412">输出修正版</text>
+                <rect x="695" y="158" width="140" height="62" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="765" y="186" font-size="13" font-weight="700" fill="#0f766e">无问题</text>
+                <text x="765" y="206" font-size="12" fill="#64748b">输出 OK 保留初版</text>
+                <text x="430" y="240" font-size="12" fill="#c2410c">注：规模较小或推理能力弱的模型容易"自信地坚持错误"，自纠正收益有限</text>
+            </svg>
+            <figcaption>图 4-2　两轮自纠正清洗流程。第一轮生成初始结果，第二轮把原始数据与初版输出一起交回模型检查；发现问题则输出修正版，否则保留初版。其收益取决于模型的自我认知能力。</figcaption>
+        </figure>
 
         <h2>实战案例：提示词的一个空格让准确率暴跌15%</h2>
 
@@ -285,7 +551,7 @@ prompt_fixed = """
             <a href="index.html">📖 返回目录</a>
             <a href="05.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
