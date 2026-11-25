@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第3章 LLM作为通用数据操作符</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +239,9 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第3章 LLM作为通用数据操作符</h2>
+    </nav>
+    <main id="content" class="main-content">
+        <h1>第3章 LLM作为通用数据操作符</h1>
 
         <p>大家好，我是你们的讲师。在上一章中，我们建立了数据质量的系统框架，明白了"应用就绪"不是简单的干净，而是场景对齐。但评估只是第一步，真正的挑战在于：当发现数据质量有问题时，用什么工具来修复？</p>
 
@@ -65,6 +263,39 @@
         </ul>
 
         <p>LLM改变了这一切。<strong>核心洞察是：几乎所有的数据准备任务都可以被重新定义为"基于上下文的文本转换问题"。</strong>实体匹配变成了"判断两个字符串是否指向同一实体"；数据清洗变成了"修复不符合规则的值"；模式匹配变成了"将源字段映射到目标schema"。而这些，正是LLM最擅长的自然语言理解与生成任务。</p>
+
+        <figure id="fig-toolchain">
+            <svg viewBox="0 0 860 340" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="tcTitle tcDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="tcTitle">碎片化工具链与统一数据操作符对比</title>
+                <desc id="tcDesc">左侧每类数据任务依赖不同专用工具；右侧单一 LLM 接口覆盖全部数据任务。</desc>
+                <rect x="0" y="0" width="860" height="340" fill="#faf8ff"/>
+                <rect x="30" y="50" width="340" height="250" rx="16" fill="#ffffff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="200" y="80" font-size="15" font-weight="700" fill="#6d28d9">碎片化工具链</text>
+                <text x="200" y="100" font-size="12" fill="#64748b">每类任务一套工具与技能栈</text>
+                <g font-size="13" fill="#334155">
+                    <rect x="55" y="115" width="290" height="36" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="138">格式转换 → Python 脚本</text>
+                    <rect x="55" y="160" width="290" height="36" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="183">数据清洗 → OpenRefine</text>
+                    <rect x="55" y="205" width="290" height="36" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="228">实体匹配 → Dedupe / Spark</text>
+                    <rect x="55" y="250" width="290" height="36" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+                    <text x="200" y="273">模式匹配 → 手工字段映射</text>
+                </g>
+                <text x="430" y="170" font-size="12" fill="#0d9488">统一为</text>
+                <text x="430" y="188" font-size="12" fill="#0d9488">文本转换</text>
+                <defs><marker id="tcArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <path d="M392 175 H468" stroke="#0d9488" stroke-width="2" marker-end="url(#tcArrow)"/>
+                <rect x="490" y="50" width="340" height="250" rx="16" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="660" y="80" font-size="15" font-weight="700" fill="#0f766e">通用数据操作符</text>
+                <text x="660" y="100" font-size="12" fill="#64748b">一个接口覆盖全部任务</text>
+                <rect x="535" y="140" width="250" height="70" rx="14" fill="#0d9488"/>
+                <text x="660" y="170" font-size="16" font-weight="700" fill="#ffffff">LLM + 提示层</text>
+                <text x="660" y="192" font-size="12" fill="#ccfbf1">指令 / 上下文 / 数据</text>
+                <text x="660" y="245" font-size="12" fill="#0f766e">无需为每类任务维护独立管道</text>
+            </svg>
+            <figcaption>图 3-1　专用工具链与通用数据操作符的对比。左侧每类任务依赖不同工具与技能栈；右侧把所有任务统一为“基于上下文的文本转换”，由单一 LLM 接口处理。</figcaption>
+        </figure>
 
         <div class="tip">
             <p><strong>关键转折点：</strong> 2023年Google DeepMind的《Data Prep Kit》和UC Berkeley的《LLM for Data Preparation》综述首次系统性地论证了LLM在数据准备领域的通用性。随后，2024年的SIGMOD、VLDB会议涌现了大量相关研究——一个全新的研究子领域就此诞生。</p>
@@ -139,6 +370,44 @@ result = operator.operate(data, "将评论分类为: 正面/负面/中性",
         <p>将LLM作为数据操作符使用，核心编程范式是"提示驱动"（Prompt-Driven）。这个范式可以用一个三元组来描述：</p>
 
         <p><strong>(指令, 上下文, 数据) → 输出</strong></p>
+
+        <figure id="fig-pipeline">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="plTitle plDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="plTitle">提示驱动的数据操作流水线</title>
+                <desc id="plDesc">指令、上下文与数据三路输入汇入 LLM 操作符，输出结果并经过校验层，校验不通过则重试。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <g font-size="14" fill="#4c1d95">
+                    <rect x="30" y="45" width="150" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+                    <text x="105" y="72">指令 Instruction</text>
+                    <rect x="30" y="125" width="150" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+                    <text x="105" y="152">上下文 Context</text>
+                    <rect x="30" y="205" width="150" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+                    <text x="105" y="232">数据 Data</text>
+                </g>
+                <defs>
+                    <marker id="plArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#a78bfa"/></marker>
+                    <marker id="plArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker>
+                </defs>
+                <path d="M180 67 H300" stroke="#a78bfa" stroke-width="2" marker-end="url(#plArrow)"/>
+                <path d="M180 147 H300" stroke="#a78bfa" stroke-width="2" marker-end="url(#plArrow)"/>
+                <path d="M180 227 H300" stroke="#a78bfa" stroke-width="2" marker-end="url(#plArrow)"/>
+                <rect x="305" y="95" width="170" height="105" rx="14" fill="#7c3aed"/>
+                <text x="390" y="140" font-size="15" font-weight="700" fill="#ffffff">LLM 操作符</text>
+                <text x="390" y="164" font-size="12" fill="#ede9fe">一次前向生成</text>
+                <path d="M475 147 H583" stroke="#0d9488" stroke-width="2" marker-end="url(#plArrow2)"/>
+                <rect x="590" y="95" width="130" height="105" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="655" y="140" font-size="14" font-weight="700" fill="#0f766e">输出结果</text>
+                <text x="655" y="164" font-size="12" fill="#64748b">JSON / 文本</text>
+                <path d="M720 147 H737" stroke="#0d9488" stroke-width="2" marker-end="url(#plArrow2)"/>
+                <rect x="740" y="95" width="95" height="105" rx="14" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="787" y="140" font-size="14" font-weight="700" fill="#c2410c">校验层</text>
+                <text x="787" y="164" font-size="11" fill="#9a3412">格式/阈值</text>
+                <path d="M787 200 V255 H390 V205" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#plArrow3)"/>
+                <defs><marker id="plArrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f97316"/></marker></defs>
+                <text x="588" y="272" font-size="12" fill="#c2410c">校验不通过 → 重试 / 修正</text>
+            </svg>
+            <figcaption>图 3-2　提示驱动的数据操作流水线。指令、上下文、数据三路输入汇入 LLM 操作符，输出经校验层把关；校验不通过则触发重试，这是生产环境中抑制输出漂移的关键环节。</figcaption>
+        </figure>
 
         <p>其中：</p>
         <ul>
@@ -314,7 +583,7 @@ output = llm.generate(prompt)
             <a href="index.html">📖 返回目录</a>
             <a href="04.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
