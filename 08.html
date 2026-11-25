@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第8章 数据错误检测：从规则到LLM</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +239,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第8章 数据错误检测：从规则到LLM</h2>
+        <h1>第8章 数据错误检测：从规则到LLM</h1>
 
         <p>大家好，我是你们的讲师。在上一章中，我们建立了数据准备质量的评估体系，但你可能会问：知道什么算"好数据"之后，怎么找出数据中那些"坏的部分"？传统上，我们用规则、约束和统计方法去抓错误——但规则是人写的，人总会遗漏。这一章我们来聊聊，LLM是如何从根本上改变错误检测的游戏规则的。</p>
 
@@ -65,6 +263,38 @@
         <div class="tip">
             <strong>要点提示：</strong>决定检测策略的不是"错误本身有多明显"，而是"你能不能把这个错误的判断标准写成一个确定性的程序"。LLM的最大价值在于：它让那些原本无法写成规则的高语义错误变得可检测了。
         </div>
+
+        <figure id="fig-error-spectrum">
+            <svg viewBox="0 0 860 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="esTitle esDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="esTitle">四类数据错误与检测难度谱</title>
+                <desc id="esDesc">语法错误与完整性违规最易检测，语义错误居中，业务规则违反最难；LLM 的价值集中在中高难度区间。</desc>
+                <rect x="0" y="0" width="860" height="280" fill="#faf8ff"/>
+                <rect x="300" y="40" width="540" height="160" rx="14" fill="#7c3aed" fill-opacity="0.06" stroke="#c4b5fd" stroke-width="2" stroke-dasharray="6 4"/>
+                <text x="570" y="28" font-size="13" font-weight="700" fill="#6d28d9">LLM 的主要价值区</text>
+                <g font-size="13" text-anchor="middle">
+                    <rect x="70" y="70" width="170" height="110" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                    <text x="155" y="100" font-weight="700" fill="#0f766e">语法错误</text>
+                    <text x="155" y="124" font-size="12" fill="#64748b">违反格式规范</text>
+                    <text x="155" y="150" font-size="12" fill="#64748b">2025-13-01</text>
+                    <rect x="270" y="70" width="170" height="110" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                    <text x="355" y="100" font-weight="700" fill="#0f766e">完整性违规</text>
+                    <text x="355" y="124" font-size="12" fill="#64748b">违反依赖 / 约束</text>
+                    <text x="355" y="150" font-size="12" fill="#64748b">外键不匹配</text>
+                    <rect x="470" y="70" width="170" height="110" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                    <text x="555" y="100" font-weight="700" fill="#6d28d9">语义错误</text>
+                    <text x="555" y="124" font-size="12" fill="#64748b">内容不合常理</text>
+                    <text x="555" y="150" font-size="12" fill="#64748b">年龄 280</text>
+                    <rect x="670" y="70" width="170" height="110" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                    <text x="755" y="100" font-weight="700" fill="#c2410c">业务规则违反</text>
+                    <text x="755" y="124" font-size="12" fill="#9a3412">违背领域逻辑</text>
+                    <text x="755" y="150" font-size="12" fill="#9a3412">离职早于入职</text>
+                </g>
+                <line x1="90" y1="230" x2="800" y2="230" stroke="#94a3b8" stroke-width="2"/>
+                <text x="110" y="255" font-size="12" fill="#64748b">检测难度：低（可写成确定性程序）</text>
+                <text x="760" y="255" font-size="12" fill="#64748b">高（难写成规则）</text>
+            </svg>
+            <figcaption>图 8-1　四类数据错误与检测难度谱。语法错误、完整性违规可写成确定的 SQL 约束；语义错误与业务规则违反则很难编码，而这正是 LLM 自然语言理解能力发挥作用的区间。</figcaption>
+        </figure>
 
         <h2>传统方法回顾</h2>
 
@@ -141,6 +371,41 @@ P004, "机械键盘青轴", -50.00, "数码", 30
             <strong>经验之谈：</strong>在实际项目中，我建议三层粒度的检测搭配使用。先用列级检测快速排除大面积问题，再用单元格级检测精确标记可疑值，最后用行级检测进行一致性验证。分层检测的效率远高于一次性全表扫描。
         </div>
 
+        <figure id="fig-granularity">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="grTitle grDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="grTitle">错误检测的三个粒度</title>
+                <desc id="grDesc">同一张表可以按列级、行级和单元格级三个粒度检测错误，三者搭配使用效率最高。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <g fill="#334155" font-size="13">
+                    <rect x="70" y="60" width="140" height="38" fill="#ede9fe" stroke="#c4b5fd"/><text x="140" y="84" font-weight="700">ID</text>
+                    <rect x="210" y="60" width="140" height="38" fill="#ede9fe" stroke="#c4b5fd"/><text x="280" y="84" font-weight="700">城市</text>
+                    <rect x="350" y="60" width="140" height="38" fill="#ede9fe" stroke="#c4b5fd"/><text x="420" y="84" font-weight="700">注册日期</text>
+                    <rect x="70" y="98" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="140" y="122">U001</text>
+                    <rect x="210" y="98" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="280" y="122">北京市深圳区</text>
+                    <rect x="350" y="98" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="420" y="122">2024-05-01</text>
+                    <rect x="70" y="136" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="140" y="160">U002</text>
+                    <rect x="210" y="136" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="280" y="160">上海市浦东</text>
+                    <rect x="350" y="136" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="420" y="160">2023-11-20</text>
+                    <rect x="70" y="174" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="140" y="198">U003</text>
+                    <rect x="210" y="174" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="280" y="198">杭州市西湖</text>
+                    <rect x="350" y="174" width="140" height="38" fill="#ffffff" stroke="#e2e8f0"/><text x="420" y="198">2024-01-08</text>
+                </g>
+                <rect x="210" y="60" width="140" height="152" fill="#0d9488" fill-opacity="0.10" stroke="#0d9488" stroke-width="2" stroke-dasharray="6 4"/>
+                <rect x="70" y="98" width="420" height="38" fill="#7c3aed" fill-opacity="0.12" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6 4"/>
+                <rect x="210" y="98" width="140" height="38" fill="#f97316" fill-opacity="0.35" stroke="#f97316" stroke-width="2"/>
+                <g font-size="13" text-anchor="start">
+                    <rect x="560" y="72" width="18" height="18" fill="#0d9488" fill-opacity="0.20" stroke="#0d9488"/>
+                    <text x="590" y="86" fill="#0f766e">列级：整列类型 / 模式异常</text>
+                    <rect x="560" y="114" width="18" height="18" fill="#7c3aed" fill-opacity="0.20" stroke="#7c3aed"/>
+                    <text x="590" y="128" fill="#6d28d9">行级：跳列一致性错误</text>
+                    <rect x="560" y="156" width="18" height="18" fill="#f97316" fill-opacity="0.35" stroke="#f97316"/>
+                    <text x="590" y="170" fill="#c2410c">单元格级：单个值语义错误</text>
+                </g>
+                <text x="420" y="255" font-size="12" fill="#64748b">例：城市字段出现“北京市深圳区”（市 / 区冲突）——SQL 约束难以表达，人却能一眼看出</text>
+            </svg>
+            <figcaption>图 8-2　错误检测的三个粒度。列级检测快速排除大面积模式问题，行级检测验证跳列一致性，单元格级检测精确标记可疑值；三者搭配使用的效率远高于一次性全表扫描。</figcaption>
+        </figure>
+
         <h3>实战案例：一条SQL约束漏掉的3000个错误</h3>
 
         <p>讲一个让我印象深刻的真实案例。一家金融科技公司的数据仓库中有一个"交易表"，包含交易金额、交易类型、客户ID等字段。数据团队用SQL约束定义了金额必须大于0、交易类型必须在枚举列表中、客户ID必须存在——看起来很完善对吗？</p>
@@ -148,6 +413,8 @@ P004, "机械键盘青轴", -50.00, "数码", 30
         <p>但问题出在一个他们完全没想到的地方：<strong>交易类型与金额范围之间存在隐含的逻辑关系</strong>。"转账"类型通常不会超过单日限额，"大额消费"通常不会在凌晨3点发生，"退款"金额应该与原始交易的金额匹配。这些业务规则没有被编码进任何约束，因为字段之间"看似没有函数依赖关系"。</p>
 
         <p>后来他们用LLM做了一个实验：随机抽样了10000条交易记录，让LLM逐一判断是否存在异常。结果LLM标记出了3000条异常记录——几乎都是合法格式下的语义异常。例如一笔"消费"记录显示购买金额为89万元，发生在凌晨2点，商户为便利店。所有字段单独看都合法，但合在一起明显不符合正常消费模式。</p>
+
+        <p><strong>标注说明：</strong>本案例中的抽样数量（10000 条）与标记出的异常数（3000 条）为教学示意数字，用于说明“逐列合法、组合异常”这类错误的规模，并非经过审计的公开统计数据。</p>
 
         <pre><code>-- SQL约束只能捕获这种错误
 ALTER TABLE transactions
@@ -173,7 +440,7 @@ ADD CONSTRAINT chk_amount CHECK (amount > 0 AND amount &lt; 1000000);
             <a href="09.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
