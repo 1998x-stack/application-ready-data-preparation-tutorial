@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第6章 微调LLM用于数据任务</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +239,9 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第6章 微调LLM用于数据任务</h2>
+    </nav>
+    <main id="content" class="main-content">
+        <h1>第6章 微调LLM用于数据任务</h1>
 
         <p>大家好，我是你们的讲师。前面两章我们讨论了提示工程和上下文学习——这些都是无需更新模型权重的方法。它们的好处是灵活、快速、不需要训练，但天花板也很明显：上下文窗口限制、提示编写成本、以及模型本身对任务的理解深度有限。</p>
 
@@ -178,6 +376,39 @@ trainer.train()</code></pre>
 
         <p>对于数据准备任务，LoRA尤其适用——因为这些任务通常不需要大幅改变模型行为，只需要微调模型在特定模式上的响应方式。</p>
 
+        <figure id="fig-lora">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="loraTitle loraDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="loraTitle">LoRA 的低秩旁路结构</title>
+                <desc id="loraDesc">冻结原始权重 W，并联一条由低秩矩阵 A、B 组成的可训练旁路，输出为 Wx 与 BAx 之和。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <rect x="35" y="115" width="95" height="70" rx="12" fill="#ede9fe" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="82" y="156" font-size="14" font-weight="700" fill="#4c1d95">输入 x</text>
+                <rect x="205" y="45" width="230" height="70" rx="12" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                <text x="320" y="78" font-size="14" font-weight="700" fill="#475569">❄ 冻结权重 W (d×d)</text>
+                <text x="320" y="99" font-size="12" fill="#64748b">不参与训练</text>
+                <rect x="205" y="185" width="105" height="70" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="257" y="226" font-size="14" font-weight="700" fill="#c2410c">A (d×r)</text>
+                <rect x="350" y="185" width="105" height="70" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="402" y="226" font-size="14" font-weight="700" fill="#c2410c">B (r×d)</text>
+                <text x="330" y="278" font-size="12" fill="#9a3412">低秩旁路（可训练，r ≪ d）</text>
+                <defs><marker id="loraArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="loraArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f97316"/></marker>
+                    <marker id="loraArrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <path d="M130 150 C170 150 170 80 203 80" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#loraArrow)"/>
+                <path d="M130 150 C170 150 170 220 203 220" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#loraArrow2)"/>
+                <path d="M310 220 H348" stroke="#f97316" stroke-width="2" marker-end="url(#loraArrow2)"/>
+                <path d="M435 80 C470 80 470 150 498 150" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#loraArrow)"/>
+                <path d="M455 220 C485 220 485 150 498 150" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#loraArrow2)"/>
+                <circle cx="520" cy="150" r="20" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+                <text x="520" y="156" font-size="16" font-weight="700" fill="#7c3aed">+</text>
+                <path d="M540 150 H573" stroke="#0d9488" stroke-width="2" marker-end="url(#loraArrow3)"/>
+                <rect x="578" y="115" width="247" height="70" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="701" y="146" font-size="14" font-weight="700" fill="#0f766e">h = Wx + BAx</text>
+                <text x="701" y="168" font-size="12" fill="#64748b">推理时可将 BA 合并回 W</text>
+            </svg>
+            <figcaption>图 6-1　LoRA 的低秩旁路结构。原始权重 W 被冻结，只在旁边并联一对低秩矩阵 A、B；前向输出为 Wx 与 BAx 之和。由于 r ≪ d，可训练参数量通常仅为原矩阵的 0.1%–1%，且推理时可合并回原权重、不增加延迟。</figcaption>
+        </figure>
+
         <pre><code># LoRA微调配置示例
 from peft import LoraConfig, get_peft_model, TaskType
 
@@ -295,12 +526,38 @@ results = {
 # 3. 成本：3B模型自部署的单日成本约$3 vs GPT-4o API $200/天
 # 4. 对比损失比交叉熵损失 F1 提升 3 个百分点</code></pre>
 
+        <p><strong>标注说明：</strong>上面 results 中的精度/召回/F1 为案例教学示意数据，用于说明“微调小模型可超越通用大模型 5-shot”这一趋势，并非来自公开基准的官方榜单数字；真实项目的数值取决于数据质量与任务定义。</p>
+
         <p>这个案例告诉我们一个重要的道理：<strong>在特定数据任务上，精心微调的小模型可以超越通用大模型</strong>。这不意味着通用大模型"不行"，而是说明通用大模型的优势在于广度，而微调的小模型可以在特定深度上做到极致。对于生产级数据准备管道，推荐的分层策略是：</p>
         <ol>
             <li><strong>轻量级任务：</strong> 使用ICL+大模型API快速处理（如临时性的数据探索）</li>
             <li><strong>核心生产任务：</strong> 使用微调小模型本地部署（如实体匹配、错误检测）</li>
             <li><strong>边缘case处理：</strong> 将微调模型不确定的case回退到大模型API</li>
         </ol>
+
+        <figure id="fig-tiered">
+            <svg viewBox="0 0 860 240" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="tierTitle tierDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="tierTitle">数据准备的分层模型策略</title>
+                <desc id="tierDesc">轻量任务用大模型加 ICL 快速处理，核心生产任务用微调小模型本地部署，边缘不确定样本回退到大模型。</desc>
+                <rect x="0" y="0" width="860" height="240" fill="#faf8ff"/>
+                <rect x="40" y="70" width="230" height="100" rx="14" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="2"/>
+                <text x="155" y="108" font-size="14" font-weight="700" fill="#6d28d9">轻量 / 探索任务</text>
+                <text x="155" y="132" font-size="12" fill="#64748b">大模型 API + ICL</text>
+                <text x="155" y="152" font-size="12" fill="#64748b">快速上线、灵活迭代</text>
+                <defs><marker id="tierArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#a78bfa"/></marker></defs>
+                <path d="M270 120 H320" stroke="#a78bfa" stroke-width="2" marker-end="url(#tierArrow)"/>
+                <rect x="325" y="70" width="230" height="100" rx="14" fill="#0d9488"/>
+                <text x="440" y="108" font-size="14" font-weight="700" fill="#ffffff">核心生产任务</text>
+                <text x="440" y="132" font-size="12" fill="#ccfbf1">微调小模型 + 本地部署</text>
+                <text x="440" y="152" font-size="12" fill="#ccfbf1">低 token 成本、高一致性</text>
+                <path d="M555 120 H605" stroke="#a78bfa" stroke-width="2" marker-end="url(#tierArrow)"/>
+                <rect x="610" y="70" width="215" height="100" rx="14" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="717" y="108" font-size="14" font-weight="700" fill="#c2410c">边缘 / 不确定样本</text>
+                <text x="717" y="132" font-size="12" fill="#9a3412">回退到大模型 API</text>
+                <text x="717" y="152" font-size="12" fill="#9a3412">兼顾质量与成本</text>
+            </svg>
+            <figcaption>图 6-2　数据准备的分层模型策略。轻量/探索任务用大模型 + ICL 快速起步；稳定的核心生产任务改用微调小模型本地部署以降低 token 成本并提升一致性；微调模型不确定的边缘样本再回退到大模型 API。</figcaption>
+        </figure>
 
         <div class="tip">
             <p><strong>微调最佳实践总结：</strong> 1) 训练数据质量优先于数量——5000条高质量标注 > 50000条噪声数据；2) 始终使用LoRA起步，除非你明确需要全参数微调；3) 对比损失优先用于匹配/排序类任务；4) 训练后务必在通用benchmark上检查灾难性遗忘程度；5) 保存每个checkpoint，方便回退。</p>
@@ -313,7 +570,7 @@ results = {
             <a href="index.html">📖 返回目录</a>
             <a href="07.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
