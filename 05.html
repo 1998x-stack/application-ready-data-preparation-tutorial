@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第5章 上下文学习与少样本数据操作</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,9 +239,9 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第5章 上下文学习与少样本数据操作</h2>
+    </nav>
+    <main id="content" class="main-content">
+        <h1>第5章 上下文学习与少样本数据操作</h1>
 
         <p>大家好，我是你们的讲师。上一章我们深入探讨了提示工程的核心技术——CoT推理、结构化约束、多轮策略。但无论你的提示写得多么精妙，它始终面临一个根本限制：<strong>零样本提示依赖模型本身的内置知识</strong>。当任务涉及特定领域规则、自定义分类体系或特殊数据格式时，零样本的准确率往往不够用。</p>
 
@@ -75,6 +273,34 @@
         <div class="tip">
             <p><strong>实用建议：</strong> 如果你的任务规则非常明确且不随时间变化，传统的规则引擎或硬编码映射效率远高于ICL。ICL的核心价值在于那些"规则说不清但人一看就懂"的任务——比如文本分类、语义匹配、模糊清洗。判断标准是："给你5个示例，一个数据标注新手能学会我的规则吗？"如果能，那就适合ICL。</p>
         </div>
+
+        <figure id="fig-icl">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="iclTitle iclDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="iclTitle">上下文学习的工作机制</title>
+                <desc id="iclDesc">K 个示例对与待处理数据一起放入上下文窗口，模型在不更新参数的情况下照模式输出结果。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <rect x="35" y="55" width="245" height="70" rx="12" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="2"/>
+                <text x="157" y="85" font-size="14" font-weight="700" fill="#6d28d9">K 个示例对</text>
+                <text x="157" y="107" font-size="12" fill="#64748b">输入 → 输出（标注好）</text>
+                <rect x="35" y="165" width="245" height="70" rx="12" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="2"/>
+                <text x="157" y="195" font-size="14" font-weight="700" fill="#6d28d9">待处理数据</text>
+                <text x="157" y="217" font-size="12" fill="#64748b">尚未标注 / 待清洗</text>
+                <defs><marker id="iclArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#a78bfa"/></marker>
+                    <marker id="iclArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <path d="M280 90 H355" stroke="#a78bfa" stroke-width="2" marker-end="url(#iclArrow)"/>
+                <path d="M280 200 H355" stroke="#a78bfa" stroke-width="2" marker-end="url(#iclArrow)"/>
+                <rect x="360" y="95" width="175" height="110" rx="14" fill="#7c3aed"/>
+                <text x="447" y="140" font-size="15" font-weight="700" fill="#ffffff">LLM</text>
+                <text x="447" y="162" font-size="12" fill="#ede9fe">❄ 权重冻结</text>
+                <text x="447" y="182" font-size="12" fill="#ede9fe">仅注意力层匹配模式</text>
+                <path d="M535 150 H615" stroke="#0d9488" stroke-width="2" marker-end="url(#iclArrow2)"/>
+                <rect x="620" y="95" width="205" height="110" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="722" y="140" font-size="14" font-weight="700" fill="#0f766e">一致性输出</text>
+                <text x="722" y="162" font-size="12" fill="#64748b">按示例模式处理新数据</text>
+                <text x="430" y="255" font-size="12" fill="#6d28d9">无需梯度更新、无需微调，示例越多越接近任务规则，但受上下文窗口限制</text>
+            </svg>
+            <figcaption>图 5-1　上下文学习的工作机制。K 个标注示例与待处理数据一起放入上下文窗口，模型在不改变任何参数的情况下“照猫画虎”。其能力来自注意力层对示例模式的现场匹配，而非权重学习。</figcaption>
+        </figure>
 
         <h2>示例选择策略</h2>
 
@@ -128,6 +354,8 @@
                 </tr>
             </tbody>
         </table>
+
+        <p><strong>标注说明：</strong>表中各类策略的提升区间为教学示意量级，用于说明相对收益方向，并非同一实验条件下的实测数据；实际提升受任务、模型与示例池质量影响。</p>
 
         <p>其中，**语义相似度选择**在实际工程中最为实用。方法是通过嵌入模型（如text-embedding-3-small或BGE系列）将每个候选示例编码为向量，然后对当前输入计算向量相似度，选取最相似的K个作为动态示例。</p>
 
@@ -240,6 +468,27 @@ def batch_process_with_icl(llm, data_batch, examples, task_instruction):
             <li><strong>中间遗忘：</strong> 排在中间位置的示例最容易被模型"忽略"。</li>
         </ul>
 
+        <figure id="fig-position-bias">
+            <svg viewBox="0 0 860 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="pbTitle pbDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="pbTitle">示例位置对 ICL 效果的影响（首因/近因效应）</title>
+                <desc id="pbDesc">示例在上下文中的位置呈现两端高、中间低的 U 形影响力：首位与末位示例影响大，中间示例易被忽略。</desc>
+                <rect x="0" y="0" width="860" height="300" fill="#faf8ff"/>
+                <line x1="120" y1="250" x2="790" y2="250" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="120" y1="250" x2="120" y2="60" stroke="#94a3b8" stroke-width="2"/>
+                <text x="70" y="150" font-size="12" fill="#64748b" transform="rotate(-90 70 150)">示例影响力</text>
+                <text x="455" y="285" font-size="12" fill="#64748b">示例在提示中的位置（首 → 末）</text>
+                <path d="M160 85 C320 250 560 250 720 85" fill="none" stroke="#f97316" stroke-width="3"/>
+                <circle cx="160" cy="85" r="6" fill="#f97316"/>
+                <circle cx="440" cy="213" r="6" fill="#f97316"/>
+                <circle cx="720" cy="85" r="6" fill="#f97316"/>
+                <text x="175" y="60" font-size="13" font-weight="700" fill="#c2410c">首位示例（首因效应）</text>
+                <text x="720" y="60" font-size="13" font-weight="700" fill="#c2410c">末位示例（近因效应）</text>
+                <text x="440" y="238" font-size="13" fill="#475569">中间示例易被忽略</text>
+                <text x="455" y="30" font-size="12" fill="#6d28d9">同一组示例，仅排列顺序不同，也可能使判断结果反转</text>
+            </svg>
+            <figcaption>图 5-2　示例位置对 ICL 效果的影响。首位与末位的示例对输出影响最大，中间的示例容易被忽略，形成两端高、中间低的 U 形曲线。因此生产环境中常采用“关键示例置于首尾 + 多轮随机投票”来缓解位置偏差。（此曲线为定性教学示意，用于说明趋势，非某篇论文的实测数值）</figcaption>
+        </figure>
+
         <p>对数据操作任务，位置偏差可能造成严重后果。例如，在实体匹配任务中，如果排在第一位的示例正好是"匹配"的正例，模型可能会倾向于将所有输入都判断为"匹配"，导致假阳性飙升。</p>
 
         <pre><code># 位置偏差消减实验
@@ -331,7 +580,7 @@ examples_pm = [
             <a href="index.html">📖 返回目录</a>
             <a href="06.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
