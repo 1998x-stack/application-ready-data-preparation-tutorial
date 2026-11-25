@@ -4,12 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第13章 异常检测与数据验证</title>
-    <link rel="stylesheet" href="theme.css">
+    <style>
+/* Violet-Teal Theme — Data/AI (ML, SQL, transformers, NumPy, Pandas, Spark) */
+/* Copy this file into the tutorial project as "theme.css" */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e8f5f0 100%);
+    font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+/* === Layout === */
+.double-border {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid #8b5cf6;
+    border-radius: 24px;
+    box-shadow: 0 20px 30px -15px rgba(0,0,0,0.2), inset 0 1px 0 0 #f5f3ff;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 0;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #faf8ff;
+    border-right: 2px solid #c4b5fd;
+    padding: 24px 16px;
+}
+
+.sidebar h3 {
+    font-size: 1.4rem;
+    color: #6d28d9;
+    border-left: 5px solid #8b5cf6;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+.chapter-list { list-style: none; }
+.chapter-list li { margin-bottom: 6px; }
+
+.chapter-list a {
+    display: block; padding: 8px 12px; text-decoration: none;
+    color: #334155; border-radius: 12px; transition: all 0.2s;
+    font-weight: 500; font-size: 0.92rem;
+}
+
+.chapter-list a:hover {
+    background: #ede9fe;
+    transform: translateX(3px);
+}
+
+.chapter-list .active {
+    background: #7c3aed;
+    color: white;
+    box-shadow: 0 2px 5px rgba(124,58,237,0.3);
+}
+
+/* === Main Content === */
+.main-content { padding: 30px 35px; background: white; min-width: 0; }
+
+/* === Typography === */
+h2 {
+    color: #4c1d95;
+    border-left: 6px solid #8b5cf6;
+    padding-left: 15px;
+    margin: 20px 0 15px;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #5b21b6;
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+h4 {
+    color: #6d28d9;
+    margin: 15px 0 8px;
+    font-size: 1.05rem;
+}
+
+p { line-height: 1.85; margin: 10px 0; color: #1e293b; }
+ul, ol { margin: 10px 0 10px 20px; line-height: 1.8; }
+li { color: #1e293b; margin-bottom: 4px; }
+strong { color: #1e1b4b; }
+
+/* === Code === */
+pre {
+    background: #1e1035; color: #e8e8f0; padding: 15px; border-radius: 12px;
+    overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin: 15px 0; font-size: 0.9rem; line-height: 1.5;
+}
+
+code {
+    background: #f5f3ff; padding: 2px 6px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+}
+
+pre code { background: none; padding: 0; }
+
+/* === Tables === */
+.main-content table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%; border-collapse: collapse; margin: 15px 0; background: #fafafe;
+}
+
+th, td {
+    border: 1px solid #c4b5fd; padding: 10px; text-align: left;
+}
+
+th {
+    background: #f5f3ff; color: #5b21b6; font-weight: 600;
+}
+
+/* === Callout Boxes === */
+.tip {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #e0f2fe; border-left: 6px solid #0ea5e9;
+}
+
+.warning {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fee2e2; border-left: 6px solid #ef4444;
+}
+
+.highlight {
+    padding: 12px 18px; border-radius: 16px; margin: 15px 0; line-height: 1.7;
+    background: #fef9c3; border: 1px solid #facc15;
+}
+
+/* === Footer Navigation === */
+.footer-nav {
+    margin-top: 45px; padding-top: 20px;
+    border-top: 2px solid #c4b5fd;
+    display: flex; justify-content: space-between;
+}
+
+.footer-nav a {
+    padding: 8px 24px; background: #f1f5f9; text-decoration: none;
+    color: #5b21b6; border-radius: 40px; font-weight: 500; transition: 0.2s;
+}
+
+.footer-nav a:hover {
+    background: #ede9fe; transform: translateY(-2px);
+}
+
+/* === Section headline === */
+h1 {
+    color: #4c1d95;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.35;
+    margin: 0 0 6px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.dek { color: #5b21b6; font-size: 1rem; margin-bottom: 6px; }
+
+/* === Figures === */
+figure { margin: 22px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { margin-top: 10px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+/* === Accessibility === */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus { position: static; display: inline-block; margin: 8px; padding: 8px 18px; background: #7c3aed; color: #fff; border-radius: 30px; }
+a:focus-visible, button:focus-visible { outline: 3px solid #7c3aed; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+    .sidebar, .footer-nav, .skip-link { display: none; }
+    .main-content { padding: 0; }
+    body { padding: 0; background: #fff; }
+}
+
+/* Wide code blocks scroll inside themselves, never widening the page */
+pre { max-width: 100%; }
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container { grid-template-columns: minmax(0, 1fr); }
+    .sidebar, .main-content { min-width: 0; }
+    .sidebar { border-right: none; border-bottom: 2px solid #c4b5fd; }
+    body { padding: 10px; }
+    .main-content { padding: 20px; }
+}
+    </style>
 </head>
 <body>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +239,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第13章 异常检测与数据验证</h2>
+        <h1>第13章 异常检测与数据验证</h1>
 
         <p>大家好，我是你们的讲师。走到这里，我们已经讨论了一整套错误检测和清洗的方法。但你有没有想过一个问题：是不是所有"不正常"的数据都需要被修复？答案是否定的。<strong>异常</strong>和<strong>错误</strong>是两个不同的概念。本章我们就来深入探讨异常检测与数据验证这个专门领域，以及LLM如何让传统异常检测焕发新生。</p>
 
@@ -104,6 +302,33 @@ shipping_address="西藏自治区那曲市色尼区浙江西路8号"
 
         <p>在这个例子中，LLM会注意到几个关键线索：凌晨3点下单、单件商品金额高达168万元、发往西藏偏远地区。每个线索单独看都可能正常，但这些线索的组合显著偏离了正常订单的模式。</p>
 
+        <figure id="fig-tabad-pipeline">
+            <svg viewBox="0 0 860 240" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="taTitle taDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="taTitle">LLM-TabAD 的处理流程</title>
+                <desc id="taDesc">表格数据先做列级语义分析，再把每一行转写成自然语言描述，交由 LLM 判断异常并给出自然语言解释。</desc>
+                <rect x="0" y="0" width="860" height="240" fill="#faf8ff"/>
+                <rect x="25" y="85" width="170" height="80" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="110" y="118" font-size="13" font-weight="700" fill="#0f766e">① 表格数据</text>
+                <text x="110" y="140" font-size="12" fill="#64748b">多列、混合类型</text>
+                <rect x="225" y="85" width="170" height="80" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="310" y="118" font-size="13" font-weight="700" fill="#0f766e">② 列级语义分析</text>
+                <text x="310" y="140" font-size="12" fill="#64748b">字段含义 / 值域</text>
+                <rect x="425" y="85" width="170" height="80" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="510" y="118" font-size="13" font-weight="700" fill="#6d28d9">③ 行 → 自然语言</text>
+                <text x="510" y="140" font-size="12" fill="#64748b">把一行写成描述</text>
+                <defs><marker id="taArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="taArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#0d9488"/></marker></defs>
+                <path d="M195 125 H223" stroke="#94a3b8" stroke-width="2" marker-end="url(#taArrow)"/>
+                <path d="M395 125 H423" stroke="#94a3b8" stroke-width="2" marker-end="url(#taArrow)"/>
+                <path d="M595 125 H623" stroke="#94a3b8" stroke-width="2" marker-end="url(#taArrow)"/>
+                <rect x="625" y="85" width="210" height="80" rx="12" fill="#7c3aed"/>
+                <text x="730" y="118" font-size="13" font-weight="700" fill="#ffffff">④ LLM 判断 + 解释</text>
+                <text x="730" y="140" font-size="12" fill="#ede9fe">异常类型 + 自然语言原因</text>
+                <text x="430" y="200" font-size="12" fill="#6d28d9">与孤立森林 / LOF 不同：不仅给出分数，还输出可读的异常原因</text>
+            </svg>
+            <figcaption>图 13-1　LLM-TabAD 的处理流程。表格先经列级语义分析，再把每行转写成自然语言描述，最后由 LLM 判断是否异常并给出可读解释。相比只输出异常分数的统计方法，它额外提供了“为什么异常”。</figcaption>
+        </figure>
+
         <h2>时序数据的LLM验证</h2>
 
         <p>时序数据是异常检测的一个特殊且重要的子领域。传感器读数、服务器指标、金融行情——这些数据天然是时间序列。时序异常检测的挑战在于：正常的模式是随时间变化的（趋势、季节性、周期性），"正常"本身是动态的。</p>
@@ -129,6 +354,32 @@ shipping_address="西藏自治区那曲市色尼区浙江西路8号"
 
         <p>这种分层设计的工程意义在于：前两层可以覆盖80%以上的常见异常，且计算成本极低。LLM只负责那些"超出统计方法能力范围"的复杂判断。一个实际物联网项目中，三层混合设计将误报率从纯统计方法的23%降低到了4.7%，同时每百万条数据点只触发约500次LLM调用，成本完全可控。</p>
 
+        <p><strong>标注说明：</strong>上述误报率（23% → 4.7%）与调用量（约 500 次 / 百万点）为教学示意数字，用于说明分层设计“降误报、控成本”的量级，并非来自公开审计报告。</p>
+
+        <figure id="fig-three-layer">
+            <svg viewBox="0 0 860 260" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="tlTitle tlDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="tlTitle">统计 + LLM 三层混合检测</title>
+                <desc id="tlDesc">第一层统计阈值实时抓极端数值，第二层时序模型抓模式偏离，第三层 LLM 负责语义与组合异常并给出解释。</desc>
+                <rect x="0" y="0" width="860" height="260" fill="#faf8ff"/>
+                <rect x="60" y="175" width="560" height="56" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="340" y="199" font-size="13" font-weight="700" fill="#0f766e">第一层　统计阈值（3-sigma / IQR）</text>
+                <text x="340" y="219" font-size="12" fill="#64748b">极端数值异常　·　毫秒级　·　输出异常分数</text>
+                <rect x="60" y="108" width="560" height="56" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="340" y="132" font-size="13" font-weight="700" fill="#6d28d9">第二层　时序模型（Prophet / LSTM）</text>
+                <text x="340" y="152" font-size="12" fill="#64748b">模式偏离、趋势突变　·　秒级　·　分数 + 模式描述</text>
+                <rect x="60" y="41" width="560" height="56" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+                <text x="340" y="65" font-size="13" font-weight="700" fill="#c2410c">第三层　LLM 推理</text>
+                <text x="340" y="85" font-size="12" fill="#9a3412">语义异常、组合异常　·　秒-分级　·　判断 + 自然语言解释</text>
+                <defs><marker id="tlArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M640 203 H680" stroke="#94a3b8" stroke-width="2" marker-end="url(#tlArrow)"/>
+                <text x="745" y="130" font-size="12" fill="#64748b">只有超出前两层能力</text>
+                <text x="745" y="150" font-size="12" fill="#64748b">范围的复杂判断才交给 LLM，</text>
+                <text x="745" y="170" font-size="12" fill="#64748b">成本因此可控</text>
+                <text x="340" y="20" font-size="12" fill="#6d28d9">分层设计：越往上，语义越深、调用越少</text>
+            </svg>
+            <figcaption>图 13-2　统计 + LLM 三层混合检测。前两层以极低成本覆盖绝大多数常见异常，LLM 只处理超出统计能力范围的语义与组合异常；分层设计显著降低误报并提升可解释性。</figcaption>
+        </figure>
+
         <h3>实战案例：传感器数据的幽灵异常</h3>
 
         <p>这是一个来自智能工厂的真实案例。某工厂的生产线安装了数千个温度传感器，监测设备运行状态。某天，运维团队发现一个传感器的读数在凌晨频繁出现"尖峰"——温度瞬间从60°C跳到150°C再跳回60°C，每次持续约2秒。</p>
@@ -149,7 +400,7 @@ shipping_address="西藏自治区那曲市色尼区浙江西路8号"
             <a href="14.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
