@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,16 +42,16 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-<h2>第26章 Data-Juicer与端到端框架</h2>
+<h1>第26章 Data-Juicer与端到端框架</h1>
 
 <p>大家好！如果你一直跟着本教程学到这里，你大概已经写过至少几十个数据清洗的Python脚本了：有的用pandas做过滤，有的调LLM API做标注，有的自己手写规则做去重。这些脚本在单个文件上跑得挺好，但当你要扩展到100个文件、1000个文件时，会怎样？脚本A的输出格式和脚本B的输入格式不兼容，脚本C跑了一半内存溢出了，脚本D的结果没有人知道是怎么产生的——因为注释早就过时了。欢迎来到<strong>数据工程师的至暗时刻</strong>。</p>
 
 <p>本章要介绍的<strong>端到端数据准备框架</strong>，就是来解决这个问题的。我们会深入Data-Juicer 2.0、DataFlow、NeMo Curator三大主流框架，看它们如何用声明式配置替代命令式脚本，如何让数据流水线变得可复用、可审计、可扩展。如果说前25章教的是"数据操作的每一招每一式"，那么这一章就是教你怎么把这些招式组合成一套完整的<strong>拳法</strong>。</p>
 
-<h3>26.1 为什么需要端到端框架？</h3>
+<h2>26.1 为什么需要端到端框架？</h2>
 
 <p>在框架出现之前，大多数团队的数据准备流程是这样的：工程师A写一个Python脚本做清洗，交给工程师B处理，B发现格式不对，手动修改了几个字段，然后传给C做标注，C用自己的脚本重新跑了一遍——这时候A的原始版本和B的修改版本已经完全不可追溯了。这就是典型的<strong>ad-hoc脚本之痛</strong>。</p>
 
@@ -104,7 +105,31 @@
     </tbody>
 </table>
 
-<h3>26.2 Data-Juicer 2.0全景</h3>
+        <figure id="fig-framework-compare">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="fwcTitle fwcDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="fwcTitle">三大端到端数据准备框架的定位</title>
+                <desc id="fwcDesc">Data-Juicer 以声明式配置和丰富算子见长，DataFlow 以 PyTorch 风格代码驱动见长，NeMo Curator 以 GPU 加速和 NVIDIA 生态见长。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="30" y="60" width="240" height="140" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="150" y="93" font-size="13" font-weight="700" fill="#0f766e">Data-Juicer 2.0</text>
+                <text x="150" y="120" font-size="12" fill="#334155">声明式 YAML 配方</text>
+                <text x="150" y="142" font-size="12" fill="#334155">200+ 算子、50+ 配方</text>
+                <text x="150" y="168" font-size="12" fill="#64748b">CPU 分布式（Ray/Spark）</text>
+                <rect x="300" y="60" width="240" height="140" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="93" font-size="13" font-weight="700" fill="#6d28d9">DataFlow</text>
+                <text x="420" y="120" font-size="12" fill="#334155">PyTorch 风格代码</text>
+                <text x="420" y="142" font-size="12" fill="#334155">80+ 算子、惰性求值</text>
+                <text x="420" y="168" font-size="12" fill="#64748b">细粒度控制 + 断点续跑</text>
+                <rect x="570" y="60" width="240" height="140" rx="12" fill="#7c3aed"/>
+                <text x="690" y="93" font-size="13" font-weight="700" fill="#ffffff">NeMo Curator</text>
+                <text x="690" y="120" font-size="12" fill="#ede9fe">GPU 加速（cuDF/RAPIDS）</text>
+                <text x="690" y="142" font-size="12" fill="#ede9fe">原生 MCP + ZenML</text>
+                <text x="690" y="168" font-size="12" fill="#fde68a">大规模 GPU 集群</text>
+            </svg>
+            <figcaption>图 26-1　三大端到端数据准备框架的定位。配置驱动、代码驱动与 GPU 加速三条路线各有适用场景，选型的关键是匹配团队的技能栈与基础设施。</figcaption>
+        </figure>
+
+<h2>26.2 Data-Juicer 2.0全景</h2>
 
 <p><strong>Data-Juicer</strong> 是由阿里云和ModelScope社区联合开发的开源数据准备框架，目前已经演进到2.0版本。它的核心设计理念是"<strong>让数据准备像炒菜一样按配方来</strong>"——你只需要定义好配方（recipe），系统自动帮你完成食材（数据）的清洗、切配（处理）、烹制（变换）。</p>
 
@@ -193,7 +218,37 @@ process:
 export_path: /data/processed/cleaned_dataset.jsonl
 export_format: jsonl</code></pre>
 
-<h3>26.3 DataFlow：PyTorch风格的流水线</h3>
+        <figure id="fig-juicer-pipeline">
+            <svg viewBox="0 0 840 230" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="jplTitle jplDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="jplTitle">Data-Juicer 配方流水线</title>
+                <desc id="jplDesc">一个预训练数据配方按顺序执行清洗、质量过滤、去重与 LLM 增强标注四类算子，每个算子由配置参数驱动。</desc>
+                <rect x="0" y="0" width="840" height="230" fill="#faf8ff"/>
+                <rect x="40" y="75" width="170" height="85" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="125" y="108" font-size="13" font-weight="700" fill="#0f766e">① 基础清洗</text>
+                <text x="125" y="130" font-size="12" fill="#64748b">HTML / Unicode</text>
+                <text x="125" y="148" font-size="12" fill="#64748b">空白符规范化</text>
+                <rect x="240" y="75" width="170" height="85" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="325" y="108" font-size="13" font-weight="700" fill="#6d28d9">② 质量过滤</text>
+                <text x="325" y="130" font-size="12" fill="#64748b">语种 / 困惑度</text>
+                <text x="325" y="148" font-size="12" fill="#64748b">特殊字符比例</text>
+                <rect x="440" y="75" width="170" height="85" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="525" y="108" font-size="13" font-weight="700" fill="#6d28d9">③ 去重</text>
+                <text x="525" y="130" font-size="12" fill="#64748b">精确哈希</text>
+                <text x="525" y="148" font-size="12" fill="#64748b">MinHash 模糊去重</text>
+                <rect x="640" y="75" width="170" height="85" rx="12" fill="#7c3aed"/>
+                <text x="725" y="108" font-size="13" font-weight="700" fill="#ffffff">④ LLM 标注</text>
+                <text x="725" y="130" font-size="12" fill="#ede9fe">质量标签</text>
+                <text x="725" y="148" font-size="12" fill="#ede9fe">数据富化</text>
+                <defs><marker id="jplArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M210 117 H237" stroke="#94a3b8" stroke-width="2" marker-end="url(#jplArrow)"/>
+                <path d="M410 117 H437" stroke="#94a3b8" stroke-width="2" marker-end="url(#jplArrow)"/>
+                <path d="M610 117 H637" stroke="#94a3b8" stroke-width="2" marker-end="url(#jplArrow)"/>
+                <text x="420" y="200" font-size="12" fill="#64748b">声明式配方：算子可重排、参数可调、变更可版本化</text>
+            </svg>
+            <figcaption>图 26-2　Data-Juicer 配方流水线。清洗、过滤、去重与 LLM 标注四类算子按声明顺序执行，算子可重排、参数可调、配方本身可版本化，取代了紧耦合的手写脚本。</figcaption>
+        </figure>
+
+<h2>26.3 DataFlow：PyTorch风格的流水线</h2>
 
 <p>如果说Data-Juicer是"配置驱动"的框架，那么<strong>DataFlow</strong>就是"代码驱动"的框架。DataFlow由清华大学与智源研究院联合开发，它的设计理念是：<strong>用PyTorch的风格来写数据流水线</strong>。熟悉PyTorch的开发者几乎零成本上手——它的核心API就是 <code>nn.Module</code> 风格的可组合算子。</p>
 
@@ -251,7 +306,7 @@ for batch in pipeline.batch(dataset, batch_size=1024):
     <strong>💡 设计哲学对比</strong>：Data-Juicer偏向"声明式配置"，适合标准化的数据处理流程——你选配方，框架执行。DataFlow偏向"命令式编码"，适合需要细粒度控制的场景——你写算子，框架管理执行和容错。选择哪个取决于你的团队构成：如果你的团队有专职的数据工程师，DataFlow的灵活性更优；如果目标是让算法工程师也能快速上手，Data-Juicer的配置化更适合。
 </div>
 
-<h3>26.4 NeMo Curator与Zem生态</h3>
+<h2>26.4 NeMo Curator与Zem生态</h2>
 
 <p><strong>NeMo Curator</strong>是NVIDIA推出的数据整理工具，与NeMo生态深度绑定。它的独特优势在于<strong>GPU加速</strong>——利用NVIDIA的cuDF和RAPIDS套件，在GPU上实现数据处理的端到端加速，相比CPU版本通常能获得5~10倍的性能提升。</p>
 
@@ -328,7 +383,7 @@ for batch in pipeline.batch(dataset, batch_size=1024):
     </table>
 </div>
 
-<h3>26.5 框架选型指南</h3>
+<h2>26.5 框架选型指南</h2>
 
 <p>面对这三个框架，你应该怎么选？这里提供几个判断标准：</p>
 
@@ -356,7 +411,7 @@ for batch in pipeline.batch(dataset, batch_size=1024):
     <li>你需要与MLOps平台（ZenML等）深度集成</li>
 </ul>
 
-<h3>26.6 实战案例：从200行脚本到5行YAML</h3>
+<h2>26.6 实战案例：从200行脚本到5行YAML</h2>
 
 <p>让我讲一个真实的踩坑故事。</p>
 
@@ -384,7 +439,7 @@ process:
   - llm_label_mapper:          # 原来20行LLM标注调用
       model_name: qwen2-7b</code></pre>
 
-<h3>26.7 沙盒实验：数据配方的科学调优</h3>
+<h2>26.7 沙盒实验：数据配方的科学调优</h2>
 
 <p>Data-Juicer 2.0的沙盒实验功能是其一大亮点。你可以把数据配方当作用户，数据质量当优化目标，系统地进行A/B实验。沙盒实验的工作流程如下：</p>
 
@@ -425,9 +480,11 @@ sandbox:
     <strong>💡 实践建议</strong>：不要一上来就追求"最佳配方"。先用Data-Juicer的沙盒模式跑一轮对比实验，找到"过滤阈值与模型性能之间的帕累托前沿"。通常你会发现：过滤掉30%~40%的低质量数据后，模型性能提升显著；再往上过滤，收益就递减了。这个拐点就是你的<strong>最优过滤率</strong>。
 </div>
 
-<h3>26.8 本章小结</h3>
+<h2>26.8 本章小结</h2>
 
 <p>端到端数据准备框架将我们从"手写脚本、手动操作、难以复现"的数据工程泥潭中解放出来。Data-Juicer的配置化、DataFlow的PyTorch风格、NeMo Curator的GPU加速——三者各有千秋，但核心理念一致：<strong>让数据准备变得标准化、可复用、可扩展</strong>。选择哪个框架不重要，重要的是迈出从ad-hoc脚本到框架化流水线的这一步。</p>
+
+        <p><strong>标注说明：</strong>本章涉及的算子与配方数量（200+ / 50+ / 80+）、执行模式（4 种）、GPU 加速倍数（5–10 倍 / 5–20 倍）、案例中的迁移对比（200 行脚本 → 约 5 行 YAML、3 小时 → 约 40 分钟）以及最优过滤率（约 30%–40%）等数字与案例，均为教学示意，用于说明框架化的价值与量级，并非来自经审计的公开基准评测。</p>
 
 <p>下一章我们将进入一个同样关键的领域——<strong>数据治理、溯源与安全保障</strong>。毕竟，数据流水线跑通了只是第一步，你还需要确保数据是合规的、隐私是受保护的、每一笔变更都是可追溯的。在一个监管日益严格的时代，这可能是比技术本身更重要的能力。</p>
 
@@ -436,7 +493,7 @@ sandbox:
             <a href="index.html">📖 返回目录</a>
             <a href="27.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

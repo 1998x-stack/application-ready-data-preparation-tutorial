@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第25章 合成数据生成与知识蒸馏</h1>
 
         <h2>合成数据：新时代的数据引擎</h2>
 
@@ -82,6 +85,30 @@
                 <tr><td>进化驱动</td><td>WizardLM, Evol-Instruct</td><td>高（持续演化）</td><td>中低（可能退化）</td><td>高</td><td>复杂推理、创意写作</td></tr>
             </tbody>
         </table>
+
+        <figure id="fig-synth-paradigms">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sypTitle sypDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="sypTitle">合成数据的三大生成范式</title>
+                <desc id="sypDesc">角色驱动从角色与主题批量生成，分层采样按分类体系均匀覆盖，进化驱动从种子出发用深度、广度与变异操作持续衍生。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="30" y="60" width="240" height="140" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="150" y="93" font-size="13" font-weight="700" fill="#0f766e">角色驱动</text>
+                <text x="150" y="120" font-size="12" fill="#334155">角色 + 主题批量生成</text>
+                <text x="150" y="142" font-size="12" fill="#334155">简单高效</text>
+                <text x="150" y="168" font-size="12" fill="#64748b">多样性受限于角色模板</text>
+                <rect x="300" y="60" width="240" height="140" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="93" font-size="13" font-weight="700" fill="#6d28d9">分层采样</text>
+                <text x="420" y="120" font-size="12" fill="#334155">构建分类体系后分层生成</text>
+                <text x="420" y="142" font-size="12" fill="#334155">系统化、覆盖全</text>
+                <text x="420" y="168" font-size="12" fill="#64748b">需要先设计 taxonomy</text>
+                <rect x="570" y="60" width="240" height="140" rx="12" fill="#7c3aed"/>
+                <text x="690" y="93" font-size="13" font-weight="700" fill="#ffffff">进化驱动</text>
+                <text x="690" y="120" font-size="12" fill="#ede9fe">深度/广度进化 + 变异</text>
+                <text x="690" y="142" font-size="12" fill="#ede9fe">持续衍生、上限高</text>
+                <text x="690" y="168" font-size="12" fill="#fde68a">可能“为复杂而复杂”退化</text>
+            </svg>
+            <figcaption>图 25-1　合成数据的三大生成范式。角色驱动、分层采样与进化驱动在多样性控制、质量稳定性与扩展性上各有取舍，实践中最常见的是三者混合使用。</figcaption>
+        </figure>
 
         <h2>Self-Instruct 与 WizardLM</h2>
 
@@ -213,10 +240,36 @@ class EvolInstruct:
         <ul>
             <li><strong>教师模型的多样性</strong>：使用多个不同的教师模型生成合成数据，可以延缓坍塌</li>
             <li><strong>混合策略</strong>：将合成数据与真实数据交错混合，而不是先合成后训练</li>
-            <li><strong>数据新鲜度</strong>：定期注入新的真实数据，稀释合成数据的负面影响</li>
+            <li><strong>数据新鲜度</strong>:定期注入新的真实数据，稀释合成数据的负面影响</li>
         </ul>
 
-        <h3>多样性度量与"敌意过滤"</h3>
+        <figure id="fig-model-collapse">
+            <svg viewBox="0 0 840 230" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="mccTitle mccDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="mccTitle">合成数据比例与模型坍塌风险</title>
+                <desc id="mccDesc">合成数据比例低于约 30% 属安全区间，超过约 50% 开始出现模型坍塌，超过约 60% 模型质量断崖式下跌。</desc>
+                <rect x="0" y="0" width="840" height="230" fill="#faf8ff"/>
+                <text x="420" y="34" font-size="13" font-weight="700" fill="#4c1d95">合成数据比例（占训练数据）与坍塌风险</text>
+                <rect x="60" y="80" width="720" height="44" rx="8" fill="#f0fdfa" stroke="#5eead4"/>
+                <rect x="60" y="80" width="216" height="44" rx="8" fill="#5eead4"/>
+                <rect x="276" y="80" width="144" height="44" fill="#fde68a"/>
+                <rect x="420" y="80" width="360" height="44" fill="#fca5a5"/>
+                <text x="168" y="108" font-size="12" font-weight="700" fill="#0f766e">安全 &lt; 30%</text>
+                <text x="348" y="108" font-size="12" font-weight="700" fill="#92400e">&lt; 50%</text>
+                <text x="600" y="108" font-size="12" font-weight="700" fill="#b91c1c">坍塌加剧 / 断崖</text>
+                <text x="60" y="150" font-size="11" fill="#64748b">0%</text>
+                <text x="276" y="150" font-size="11" fill="#64748b">30%</text>
+                <text x="420" y="150" font-size="11" fill="#64748b">50%</text>
+                <text x="780" y="150" font-size="11" fill="#64748b" text-anchor="end">100%</text>
+                <path d="M276 60 V74" stroke="#f59e0b" stroke-width="2"/>
+                <text x="276" y="52" font-size="11" fill="#b45309">开始坍塌</text>
+                <path d="M420 60 V74" stroke="#ef4444" stroke-width="2"/>
+                <text x="432" y="52" font-size="11" fill="#b91c1c">断崖式下跌</text>
+                <text x="420" y="195" font-size="12" fill="#64748b">缓解：多教师混合 · 合成与真实交错 · 定期注入新真实数据</text>
+            </svg>
+            <figcaption>图 25-2　合成数据比例与模型坍塌风险。低于约 30% 属安全区间，超过约 50% 开始出现坍塌、约 60% 质量断崖；多教师混合、交错训练与注入新真实数据可延缓坍塌。</figcaption>
+        </figure>
+
+        <h3>多样性度量与“敌意过滤”</h3>
 
         <p>合成数据另一个常见问题是"表面多样性但深层单一"。你可能生成了 10 万条指令，看起来每个都不一样，但仔细分析会发现它们都采用相同的句式和思维模式。这被称为"hidden homogeneity"（隐性同质化）。</p>
 
@@ -240,16 +293,18 @@ class EvolInstruct:
             <strong>踩坑实录：</strong> 某团队在一款客服场景的模型上大量使用了 GPT-4 合成的客服对话数据进行训练。初期效果极好——意图识别准确率提升了 15%。但上线后用户反馈如潮："为什么这个 AI 客服每句话都以'作为一个AI助手'开头？""回答像模板一样死板。"更严重的问题是，模型对非标准问法（比如"能帮我个忙吗？"这种隐含请求）完全无法处理——因为合成数据中的"用户提问"全部是标准化的"请帮我……"。最终团队不得不砍掉 60% 的合成数据，重新注入真实的客服对话记录，问题才得以解决。教训是：<strong>合成数据擅长复制模式，但很难复制真实交互中的多样性和意外性</strong>。
         </div>
 
-        <p>这个案例揭示了一个深层次的原理：合成数据的"便利性"也是它最大的"诅咒"——因为它太容易批量生成了，你很自然地倾向于生产大量模式一致的样本，而忽略了真实数据中弥足珍贵的"脏"和"意外"。好的合成数据策略，应该像好的教学一样——既要有标准教案，也要保留真实课堂的即兴互动。</p>
+        <p>这个案例揭示了一个深层次的原理:合成数据的"便利性"也是它最大的"诅咒"--因为它太容易批量生成了,你很自然地倾向于生产大量模式一致的样本,而忽略了真实数据中弥足珍贵的"脏"和"意外"。好的合成数据策略,应该像好的教学一样--既要有标准教案,也要保留真实课堂的即兴互动。</p>
 
-        <p>好的，到这里我们完成了数据准备的核心技术环节——从清洗、去重、过滤到混合再到合成。下一章，我们将进入本课程的第六部分——工程实践。我们会介绍 <strong>Data-Juicer</strong> 这个强大的端到端数据准备框架，看看如何把所有这些技术组合成一个可维护、可扩展的工程系统。</p>
+        <p><strong>标注说明：</strong>本章涉及的合成数据比例（约 30%）、坍塌临界比例（50% / 60%）、Self-Instruct 种子与数据量（175 条 / 52k）、LIMO 样本数（817）与对比量级（10 万）、蒸馏样本效率（2–5 倍）以及案例中的准确率提升（约 15%）与削减比例（60%）等数字，均为教学示意，用于说明合成数据与蒸馏的量级与风险，并非来自经审计的公开评测。</p>
+
+        <p>好的，到这里我们完成了数据准备的核心技术环节--从清洗、去重、过滤到混合再到合成。下一章,我们将进入本课程的第六部分--工程实践。我们会介绍 <strong>Data-Juicer</strong> 这个强大的端到端数据准备框架,看看如何把所有这些技术组合成一个可维护、可扩展的工程系统。</p>
 
         <div class="footer-nav">
             <a href="24.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="26.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
