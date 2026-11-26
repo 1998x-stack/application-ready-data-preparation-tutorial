@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第17章 跨域零样本实体匹配</h1>
 
         <h2>零样本实体匹配的挑战</h2>
 
@@ -65,6 +68,25 @@
         </div>
 
         <p>LLM的出现为零样本实体匹配提供了全新的可能性。不同于传统方法依赖领域特定的训练数据，LLM在预训练阶段已经吸收了海量的跨领域知识，理论上具备了"通才"的潜力。但如何将这种潜力转化为实际匹配能力，还需要精巧的技术设计。本章将深入探讨三种关键策略：AnyMatch高效零样本匹配、跨数据集迁移的秘诀，以及元学习与合成数据辅助。</p>
+
+        <figure id="fig-domain-shift">
+            <svg viewBox="0 0 840 270" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="dstTitle dstDesc" font-family="system-ui, 'PingFang SC', sans-serif">
+                <title id="dstTitle">领域偏移导致的 F1 断崖</title>
+                <desc id="dstDesc">同一监督学习模型在域内测试 F1 可达 95% 以上，直接跨域测试同一基准时 F1 掉到约 58%，相差约 32 个百分点。</desc>
+                <rect x="0" y="0" width="840" height="270" fill="#faf8ff"/>
+                <text x="420" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#4c1d95">领域偏移：同一模型的域内 vs 跨域表现</text>
+                <text x="120" y="105" text-anchor="end" font-size="12" fill="#334155">域内测试</text>
+                <rect x="140" y="80" width="620" height="40" rx="6" fill="#f0fdfa" stroke="#5eead4"/>
+                <rect x="140" y="80" width="589" height="40" rx="6" fill="#5eead4"/>
+                <text x="748" y="105" font-size="12" font-weight="700" fill="#0f766e">&gt; 95%</text>
+                <text x="120" y="185" text-anchor="end" font-size="12" fill="#334155">跨域测试</text>
+                <rect x="140" y="160" width="620" height="40" rx="6" fill="#fee2e2" stroke="#fca5a5"/>
+                <rect x="140" y="160" width="360" height="40" rx="6" fill="#fca5a5"/>
+                <text x="518" y="185" font-size="12" font-weight="700" fill="#b91c1c">约 58%</text>
+                <text x="420" y="240" text-anchor="middle" font-size="12" fill="#64748b">断崖式下跌约 32 个百分点——领域偏移最真实的写照</text>
+            </svg>
+            <figcaption>图 17-1　领域偏移导致的 F1 断崖。同一监督模型在域内测试表现优异，一旦直接跨域应用，性能大幅缩水；这正是零样本方法要跨越的鸿沟。</figcaption>
+        </figure>
 
         <h2>AnyMatch方法</h2>
 
@@ -131,6 +153,30 @@
         <div class="tip">
             <strong>选择建议：</strong> 如果你面临零样本场景，但预算有限（不能频繁调用GPT-4/Claude的API），AnyMatch配合Mistral 7B或Llama-3 8B是最具性价比的选择。如果匹配精度是第一优先级且预算充足，考虑使用GPT-4o的零样本提示匹配，但要注意做好提示工程和结果校验。
         </div>
+
+        <figure id="fig-anymatch">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="atkTitle atkDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="atkTitle">AnyMatch 的三个零样本机制</title>
+                <desc id="atkDesc">结构化语义编码让小型模型读懂字段，对比式微调在通用合成数据上学到可迁移表示，动态阈值自校准把低置信度记录交人工复核。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="30" y="70" width="240" height="120" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="150" y="103" font-size="13" font-weight="700" fill="#0f766e">① 结构化语义编码</text>
+                <text x="150" y="128" font-size="12" fill="#334155">字段名 : 字段值 键值对</text>
+                <text x="150" y="150" font-size="12" fill="#334155">让 7B/8B 小模型读懂结构</text>
+                <text x="150" y="172" font-size="12" fill="#64748b">不依赖 GPT-4 级理解</text>
+                <rect x="300" y="70" width="240" height="120" rx="12" fill="#7c3aed"/>
+                <text x="420" y="103" font-size="13" font-weight="700" fill="#ffffff">② 对比式微调</text>
+                <text x="420" y="128" font-size="12" fill="#ede9fe">匹配对拉近、不匹配对推开</text>
+                <text x="420" y="150" font-size="12" fill="#ede9fe">只用通用合成数据训练</text>
+                <text x="420" y="172" font-size="12" fill="#ede9fe">学到可迁移的匹配表示</text>
+                <rect x="570" y="70" width="240" height="120" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="690" y="103" font-size="13" font-weight="700" fill="#6d28d9">③ 动态阈值自校准</text>
+                <text x="690" y="128" font-size="12" fill="#334155">同时给出分数与置信度</text>
+                <text x="690" y="150" font-size="12" fill="#334155">低置信度转人工复核</text>
+                <text x="690" y="172" font-size="12" fill="#64748b">不强制“是/否”二分类</text>
+            </svg>
+            <figcaption>图 17-2　AnyMatch 的三个零样本机制。结构化编码、对比式微调与动态阈值配合，让通用小模型在无目标域标注时也能给出可用的匹配与置信度。</figcaption>
+        </figure>
 
         <h2>跨数据集迁移的秘诀</h2>
 
@@ -273,6 +319,8 @@ class SyntheticEntityMatcherGenerator:
             <strong>核心教训：</strong> 跨域零样本匹配最大的陷阱在于——你永远不会知道你不知道什么。电商领域的"常识"（同名即同物、缩写即简写、同义词即等价）在医疗领域可能完全不适用。在任何跨域匹配项目中，至少要有以下三道防线：(1) 使用少量（50-100条）目标域数据做快速验证，(2) 设置匹配结果的置信度阈值，低置信度记录自动标记人工审核，(3) 部署后持续监控匹配分布的变化，一旦发现异常立马告警。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的标注项目工时（约 5–8 人周）、域内/跨域 F1（>95% vs 约 58%）、性能保留比例（约 85%）、标注节省（80% 以上）与推理速度（>500 对/秒），以及表中各数据增强策略的提升区间、合成数据 F1（91.2% vs 89.7%）和保留比例（60–70%）等数字，均为教学示意，用于说明零样本匹配的量级与权衡，并非来自经审计的公开评测。</p>
+
         <p>零样本匹配教会我们的最重要的一件事是：LLM虽然强大，但它不知道"自己不知道什么"。在安全关键的数据集成任务中，给LLM的匹配结果加上一道人工校验的护栏，不是可选配置，而是必须的兜底策略。下一章我们将进入一个更宏大的主题——<strong>Agent驱动的数据集成编排</strong>，看看如何将实体匹配、模式匹配、数据清洗等环节串联成一个智能、自动化的集成流水线。</p>
 
         <div class="footer-nav">
@@ -280,7 +328,7 @@ class SyntheticEntityMatcherGenerator:
             <a href="index.html">📖 返回目录</a>
             <a href="18.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

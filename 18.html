@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第18章 Agent驱动的数据集成编排</h1>
 
         <h2>为什么数据集成需要Agent</h2>
 
@@ -162,8 +165,39 @@
         <p>Agent-OM的混合记忆架构是其高效的关键。关系记忆层保证了已确认的知识可以跨任务复用——如果你在上一次ERP系统集成中已经确认了<code>customer_id</code>等价于<code>client_number</code>，这个知识会被持久化，下次遇到类似的匹配任务时可以直接使用。向量记忆层则提供了灵活的相似度检索能力，让Agent能够快速定位与当前问题相关的历史匹配案例。这种"长期持久化+短期灵活性"的记忆设计，在多个模式匹配基准上比无记忆的Agent方案提升了12-18%的F1分数。</p>
 
         <div class="tip">
-            <strong>架构要点：</strong> Agent-OM的成功不在于使用了最强大的LLM，而在于清晰的角色分工。检索Agent负责"找"（广撒网），匹配Agent负责"断"（精确判断），互不干扰但又通过共享记忆紧密协作。这种架构的另一个好处是可扩展性——你可以在不修改匹配Agent逻辑的前提下，升级检索Agent的检索策略或向量数据库，反之亦然。
+            <strong>架构要点:</strong> Agent-OM的成功不在于使用了最强大的LLM,而在于清晰的角色分工。检索Agent负责"找"(广撒网),匹配Agent负责"断"(精确判断),互不干扰但又通过共享记忆紧密协作。这种架构的另一个好处是可扩展性--你可以在不修改匹配Agent逻辑的前提下,升级检索Agent的检索策略或向量数据库，反之亦然。
         </div>
+
+        <figure id="fig-agent-om">
+            <svg viewBox="0 0 840 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="aomTitle aomDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="aomTitle">Agent-OM 的双 Agent 与混合记忆架构</title>
+                <desc id="aomDesc">检索 Agent 负责候选发现与上下文收集，匹配 Agent 负责匹配推理与决策，两者通过关系记忆、向量记忆、工作记忆和会话记忆协作。</desc>
+                <rect x="0" y="0" width="840" height="300" fill="#faf8ff"/>
+                <rect x="60" y="40" width="300" height="90" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="210" y="75" font-size="13" font-weight="700" fill="#0f766e">检索 Agent</text>
+                <text x="210" y="100" font-size="12" fill="#334155">候选发现 / 上下文收集</text>
+                <text x="210" y="118" font-size="12" fill="#64748b">广撒网：找相关信息</text>
+                <rect x="480" y="40" width="300" height="90" rx="12" fill="#7c3aed"/>
+                <text x="630" y="75" font-size="13" font-weight="700" fill="#ffffff">匹配 Agent</text>
+                <text x="630" y="100" font-size="12" fill="#ede9fe">匹配推理 / 决策</text>
+                <text x="630" y="118" font-size="12" fill="#ede9fe">精确判断：下结论</text>
+                <rect x="330" y="88" width="180" height="18" rx="4" fill="#faf8ff"/>
+                <text x="420" y="101" font-size="11" fill="#64748b">共享混合记忆</text>
+                <defs><marker id="aomArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="aomArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M360 70 H478" stroke="#94a3b8" stroke-width="2" marker-end="url(#aomArrow)"/>
+                <path d="M480 108 H362" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#aomArrow2)"/>
+                <rect x="60" y="175" width="720" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="202" font-size="13" font-weight="700" fill="#6d28d9">混合记忆架构</text>
+                <text x="150" y="232" font-size="12" fill="#334155">关系记忆：已确认匹配对</text>
+                <text x="150" y="252" font-size="12" fill="#64748b">持久化 · 结构化查询</text>
+                <text x="420" y="232" font-size="12" fill="#334155">向量记忆：嵌入与中间结果</text>
+                <text x="420" y="252" font-size="12" fill="#64748b">会话级 · 相似度检索</text>
+                <text x="690" y="232" font-size="12" fill="#334155">工作 / 会话记忆</text>
+                <text x="690" y="252" font-size="12" fill="#64748b">步骤级 / 任务级</text>
+            </svg>
+            <figcaption>图 18-1　Agent-OM 的双 Agent 与混合记忆架构。检索与匹配 Agent 职责分离又通过共享记忆协作；关系记忆提供跨任务复用的持久知识，向量、工作与会话记忆提供当前任务的灵活检索。</figcaption>
+        </figure>
 
         <h2>工具规划的智能编排</h2>
 
@@ -239,8 +273,34 @@
         <p>工具规划中最有趣也最具挑战性的一个能力是<strong>代码生成回退</strong>（Code Generation Fallback）。当没有现成的工具可以满足Agent的需求时，Agent应该能够动态生成代码来完成特定操作。例如，当Agent需要执行一个复杂的数据变换，而内置的变换工具无法满足时，它可以生成一段Python代码来执行该变换。这种"工具优先、代码回退"的混合策略，在多个生产数据集成项目中展示了极强的灵活性。</p>
 
         <div class="warning">
-            <strong>踩坑提醒：</strong> Agent在工具规划中常见的错误是"过度规划"——它会非常详细地规划后面10步、20步的行动，但实际情况往往在3步之内就偏离了预期。实际部署时，建议将Agent的规划窗口限制在"接下来1-3步"，强制Agent在每步执行后重新评估状态。过度规划不仅浪费Token，还会让Agent陷入"坚持原计划、忽视现状偏差"的陷阱。
+            <strong>踩坑提醒:</strong> Agent在工具规划中常见的错误是"过度规划"--它会非常详细地规划后面10步、20步的行动,但实际情况往往在3步之内就偏离了预期。实际部署时,建议将Agent的规划窗口限制在"接下来1-3步",强制Agent在每步执行后重新评估状态。过度规划不仅浪费Token,还会让Agent陷入"坚持原计划、忽视现状偏差”的陷阱。
         </div>
+
+        <figure id="fig-react-loop">
+            <svg viewBox="0 0 840 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="rctTitle rctDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="rctTitle">数据集成 Agent 的 ReAct 循环</title>
+                <desc id="rctDesc">Agent 在思考、行动、观察之间交替：先推理下一步动作，再调用工具，然后观察结果并决定继续或停止。</desc>
+                <rect x="0" y="0" width="840" height="280" fill="#faf8ff"/>
+                <circle cx="420" cy="150" r="60" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="145" font-size="13" font-weight="700" fill="#6d28d9">ReAct</text>
+                <text x="420" y="165" font-size="11" fill="#64748b">循环</text>
+                <circle cx="180" cy="150" r="55" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="180" y="146" font-size="12" font-weight="700" fill="#0f766e">思考</text>
+                <text x="180" y="166" font-size="11" fill="#64748b">分析下一步</text>
+                <circle cx="420" cy="40" r="42" fill="#7c3aed"/>
+                <text x="420" y="38" font-size="12" font-weight="700" fill="#ffffff">行动</text>
+                <text x="420" y="56" font-size="10" fill="#ede9fe">调用工具</text>
+                <circle cx="660" cy="150" r="55" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="660" y="146" font-size="12" font-weight="700" fill="#0f766e">观察</text>
+                <text x="660" y="166" font-size="11" fill="#64748b">校验结果</text>
+                <defs><marker id="rctArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M222 120 A120 120 0 0 1 383 52" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#rctArrow)"/>
+                <path d="M458 52 A120 120 0 0 1 617 122" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#rctArrow)"/>
+                <path d="M610 175 A120 120 0 0 1 235 178" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#rctArrow)"/>
+                <text x="420" y="262" font-size="12" fill="#64748b">规划窗口限制在 1–3 步；结果异常时触发停机制与人工审批</text>
+            </svg>
+            <figcaption>图 18-2　数据集成 Agent 的 ReAct 循环。Agent 在思考、行动、观察之间持续推进，直到任务完成；把规划窗口限制在若干步、并对异常结果设停机制，是生产环境中避免“过度规划”与连锁错误的关键。</figcaption>
+        </figure>
 
         <h2>声明式与可复现的流水线</h2>
 
@@ -309,10 +369,12 @@
         <p>更糟糕的是，数据仓库团队配置了自动加载管道——Agent写入的结果被直接加载到了生产数据仓库中。第二天早上，BI团队打开报表时发现销售额凭空膨胀了150倍，CFO看到报表后紧急召开了全公司会议。从事故发生到问题被发现和修复，整整花了三天时间。事后分析发现，Agent在操作日志中留下了明显的警告信号——"检测到结果记录数异常增长（预期10万，实际1500万）"，但它没有停下来验证，而是选择了继续执行。</p>
 
         <div class="warning">
-            <strong>血的教训：</strong> 这个案例揭示了Agent驱动数据集成的三个关键漏洞：(1) Agent缺乏"常识性校验"——它不知道10万条记录JOIN后变成1500万条是不合理的，因为它没有真正的领域知识；(2) Agent的审计逻辑不够健壮——它虽然检测到了异常，但没有配置"异常自动停机制"；(3) 数据写入目标系统前缺少人工审批环节。修复方案是：(a) 在Agent中加入预期结果范围声明功能，超出范围自动暂停；(b) 为高风险操作（写数据库、覆盖文件）设置人工审批门禁；(c) 在Agent的ReAct循环中加入"自我质疑"步骤——定期反问自己"这个结果在合理的数量级上吗"。
+            <strong>血的教训:</strong> 这个案例揭示了Agent驱动数据集成的三个关键漏洞:(1) Agent缺乏"常识性校验"--它不知道10万条记录JOIN后变成1500万条是不合理的,因为它没有真正的领域知识;(2) Agent的审计逻辑不够健壮--它虽然检测到了异常,但没有配置"异常自动停机制";(3) 数据写入目标系统前缺少人工审批环节。修复方案是:(a) 在Agent中加入预期结果范围声明功能,超出范围自动暂停;(b) 为高风险操作(写数据库、覆盖文件)设置人工审批门禁;(c) 在Agent的ReAct循环中加入"自我质疑"步骤--定期反问自己“这个结果在合理的数量级上吗”。
         </div>
 
-        <p>Agent驱动的数据集成，在正确的架构设计下可以极大提升数据集成的效率和灵活性。但正如笛卡尔积事故所警示的——Agent的能力越强，越需要配套的安全防护和治理机制。自动化不是最终目标，<strong>可靠且可控</strong>的自动化才是。</p>
+        <p><strong>标注说明：</strong>本章涉及的公开框架数量（超过 15 个）、记忆架构带来的 F1 提升（12–18%）、笛卡尔积事故中的记录数（约 10 万 → 1500 万，约 150 倍）以及修复时间缩短（48 小时 → 4 小时）等数字与案例，均为教学示意，用于说明 Agent 编排的收益与风险量级，并非来自经审计的公开统计。</p>
+
+        <p>Agent驱动的数据集成，在正确的架构设计下可以极大提升数据集成的效率和灵活性。但正如笛卡尔积事故所警示的--Agent的能力越强,越需要配套的安全防护和治理机制。自动化不是最终目标,<strong>可靠且可控</strong>的自动化才是。</p>
 
         <p>到这里，我们完成了第四部分"数据集成与实体解析"的全部内容。从第15章的实体匹配、第16章的模式匹配，到第17章的跨域零样本匹配，再到本章的Agent编排，我们构建了一个完整的LLM驱动数据集成技术体系。从下一章开始，我们将进入第五部分——<strong>数据标注与增强</strong>。第19章将首先探讨<strong>LLM数据标注自动化</strong>，看看如何用最少的标注成本获取高质量的标注数据。</p>
 
@@ -321,7 +383,7 @@
             <a href="index.html">📖 返回目录</a>
             <a href="19.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
