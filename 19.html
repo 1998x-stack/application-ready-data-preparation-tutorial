@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第19章 LLM数据标注自动化</h1>
 
         <h2>数据标注：AI时代最大的瓶颈</h2>
 
@@ -99,6 +102,36 @@
         </table>
 
         <p>在实际项目中，这四种范式并不是互斥的。一个成熟的标注流水线通常会混合使用：用Prompt-Based范式做快速初筛，遇到置信度低的样本切换到RAG-Assisted或Agent-Based模式，在高吞吐场景下部署Fine-Tuned模型作为主力。这种"分级标注"策略是目前业界的最佳实践。</p>
+
+        <figure id="fig-annotation-paradigms">
+            <svg viewBox="0 0 840 330" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="anpTitle anpDesc" font-family="system-ui, 'PingFang SC', sans-serif">
+                <title id="anpTitle">四种 LLM 标注范式</title>
+                <desc id="anpDesc">提示驱动、检索增强、微调专用模型与多 Agent 协作四种范式，在自动化程度、标注质量与适用场景上各有侧重。</desc>
+                <rect x="0" y="0" width="840" height="330" fill="#faf8ff"/>
+                <text x="420" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#4c1d95">四种标注范式：从通用到专用，从单模型到多 Agent</text>
+                <rect x="30" y="55" width="370" height="110" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="215" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#0f766e">Prompt-Based</text>
+                <text x="215" y="110" text-anchor="middle" font-size="12" fill="#334155">直接提示 LLM 标注</text>
+                <text x="215" y="132" text-anchor="middle" font-size="12" fill="#64748b">自动化高 · 质量中（依赖提示设计）</text>
+                <text x="215" y="152" text-anchor="middle" font-size="12" fill="#64748b">通用分类、粗粒度标注</text>
+                <rect x="440" y="55" width="370" height="110" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="625" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#6d28d9">RAG-Assisted</text>
+                <text x="625" y="110" text-anchor="middle" font-size="12" fill="#334155">检索相似已标注案例辅助</text>
+                <text x="625" y="132" text-anchor="middle" font-size="12" fill="#64748b">自动化中高 · 质量高（有参考）</text>
+                <text x="625" y="152" text-anchor="middle" font-size="12" fill="#64748b">细粒度分类、长尾类别</text>
+                <rect x="30" y="180" width="370" height="110" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="215" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#6d28d9">Fine-Tuned</text>
+                <text x="215" y="235" text-anchor="middle" font-size="12" fill="#334155">少量标注微调专用模型</text>
+                <text x="215" y="257" text-anchor="middle" font-size="12" fill="#64748b">自动化中 · 质量很高（领域适配）</text>
+                <text x="215" y="277" text-anchor="middle" font-size="12" fill="#64748b">固定标签、高吞吐生产</text>
+                <rect x="440" y="180" width="370" height="110" rx="12" fill="#7c3aed"/>
+                <text x="625" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Agent-Based</text>
+                <text x="625" y="235" text-anchor="middle" font-size="12" fill="#ede9fe">多 Agent 协作完成复杂流程</text>
+                <text x="625" y="257" text-anchor="middle" font-size="12" fill="#ede9fe">自动化中 · 质量最高（多层校验）</text>
+                <text x="625" y="277" text-anchor="middle" font-size="12" fill="#ede9fe">复杂决策链、合规标注</text>
+            </svg>
+            <figcaption>图 19-1　四种 LLM 标注范式。它们在自动化程度、标注质量与适用场景上各有侧重，成熟流水线通常是“提示初筛 + 检索/Agent 兜底 + 微调模型主力”的混合分级。</figcaption>
+        </figure>
 
         <div class="tip">
             <strong>经验之谈：</strong> 在选择标注范式时，不要一味追求高自动化率。一个务实的指标是"人工介入比"——每标注1000条数据需要人工干预多少次。好的流水线应该让这个数字低于5%，同时保持95%以上的标注准确率。
@@ -170,6 +203,38 @@ def autolabel(text, label_set, client=client):
 
         <h3>自我修正循环</h3>
         <p>自我修正是AutoLabel的核心机制。在初次标注完成后，系统会检查以下三个信号来决定是否需要进入修正循环：标注置信度低于阈值、同一簇内标注结果不一致、或样本与已标注的相似样本产生了标签冲突。当这些信号触发时，LLM会重新审视样本并给出修正标注。这个循环最多执行三次，如果三次后仍然无法达到置信度要求，则自动标记为"需要人工审核"。</p>
+
+        <figure id="fig-autolabel-loop">
+            <svg viewBox="0 0 840 260" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="albTitle albDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="albTitle">AutoLabel 的自标注与自纠正循环</title>
+                <desc id="albDesc">聚类分组后用思维链提示初标，再检查置信度与簇内一致性，未通过则进入最多三次的修正循环，仍不达标才转人工审核。</desc>
+                <rect x="0" y="0" width="840" height="260" fill="#faf8ff"/>
+                <rect x="35" y="75" width="185" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="127" y="108" font-size="13" font-weight="700" fill="#0f766e">① 聚类 + CoT 初标</text>
+                <text x="127" y="130" font-size="12" fill="#64748b">DBSCAN 分组</text>
+                <text x="127" y="148" font-size="12" fill="#64748b">先推理再给标签</text>
+                <rect x="245" y="75" width="185" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="337" y="108" font-size="13" font-weight="700" fill="#6d28d9">② 信号检查</text>
+                <text x="337" y="130" font-size="12" fill="#64748b">置信度 / 簇内一致性</text>
+                <text x="337" y="148" font-size="12" fill="#64748b">相似样本标签冲突</text>
+                <rect x="455" y="75" width="185" height="95" rx="12" fill="#7c3aed"/>
+                <text x="547" y="108" font-size="13" font-weight="700" fill="#ffffff">③ 修正循环</text>
+                <text x="547" y="130" font-size="12" fill="#ede9fe">重新审视并复标</text>
+                <text x="547" y="148" font-size="12" fill="#ede9fe">最多执行三次</text>
+                <rect x="665" y="75" width="150" height="95" rx="12" fill="#fee2e2" stroke="#fca5a5" stroke-width="2"/>
+                <text x="740" y="108" font-size="13" font-weight="700" fill="#b91c1c">④ 人工审核</text>
+                <text x="740" y="130" font-size="12" fill="#64748b">三次后仍不达标</text>
+                <text x="740" y="148" font-size="12" fill="#64748b">才交给人</text>
+                <defs><marker id="albArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="albArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M220 122 H242" stroke="#94a3b8" stroke-width="2" marker-end="url(#albArrow)"/>
+                <path d="M430 122 H452" stroke="#94a3b8" stroke-width="2" marker-end="url(#albArrow)"/>
+                <path d="M640 122 H662" stroke="#94a3b8" stroke-width="2" marker-end="url(#albArrow)"/>
+                <path d="M547 75 V40 H337 V72" fill="none" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#albArrow2)"/>
+                <text x="442" y="32" font-size="12" fill="#6d28d9">不达标 → 修正后回到信号检查</text>
+            </svg>
+            <figcaption>图 19-2　AutoLabel 的自标注与自纠正循环。聚类分组后以思维链初标，再由置信度与一致性信号决定是否修正；最多三次仍不达标才转人工，把人的介入压缩到少数疑难样本上。</figcaption>
+        </figure>
 
         <h2>LLMAnno：检索增强的标注</h2>
 
@@ -259,6 +324,8 @@ class LLMAnno:
             <strong>规模化的真相：</strong> 这个案例告诉我们一个重要的道理：LLM标注在1000条以下的数据集上可能看起来并不比人工便宜（因为需要搭建流水线），但一旦规模超过5000条，边际成本就趋近于零。人工标注的成本是线性的，而LLM标注的成本是亚线性的——这是它最迷人的地方。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的标注预算占比（20%–40%）、外包工时（约 200 人工周）、人工介入比（低于 5%）、准确率阈值（95%）、置信度与分歧阈值（0.7 / 0.85 / 0.1）、多数投票的准确率与集中错误（97% / 3%）以及简历案例的规模与耗时（10000 份、28 类、8 万元、3 周 → 3 小时、约 1200 元、96.8%）等数字，均为教学示意，用于说明自动化的量级与权衡，并非来自经审计的公开评测。</p>
+
         <p>好了，数据标注自动化就讲到这里。本章我们深入探讨了四种标注范式、AutoLabel的自标注循环、LLMAnno的检索增强机制、以及多模型投票的置信度校准。但我们都清楚，标注的前提是对数据本身有充分的理解——只有知道了你的数据长什么样、每列数据代表什么含义，才能设计出合理的标注方案。下一章，我们就来聊聊这个话题：数据画像与语义类型发现。到时候见。</p>
 
         <div class="footer-nav">
@@ -266,7 +333,7 @@ class LLMAnno:
             <a href="index.html">📖 返回目录</a>
             <a href="20.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
