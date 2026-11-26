@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第22章 表格理解与大模型集成</h1>
 
         <h2>表格数据的特殊性</h2>
 
@@ -53,6 +56,37 @@
         <div class="highlight">
             <strong>核心矛盾：</strong> 表格是二维的结构化数据，而LLM是一维的序列模型。如何在两者之间架起桥梁，让LLM既能"看到"表格的全局结构，又能"理解"单元格之间的细粒度语义关系，是表格理解这个方向最核心的技术挑战。过去两年，这个领域涌现了大量创新——从更好的序列化策略，到专门的表格编码器，再到端到端的表格大模型。
         </div>
+
+        <figure id="fig-table-2d-1d">
+            <svg viewBox="0 0 840 290" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t21Title t21Desc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="t21Title">表格的二维结构与 LLM 的一维序列</title>
+                <desc id="t21Desc">表格的信息分布在行和列两个维度上，拍扁成一维 token 序列后会丢失列标题层级、行列父子关系与跨表引用等结构信息。</desc>
+                <rect x="0" y="0" width="840" height="290" fill="#faf8ff"/>
+                <text x="210" y="40" font-size="13" font-weight="700" fill="#4c1d95">表格：二维结构</text>
+                <g font-size="12">
+                    <rect x="70" y="60" width="90" height="34" fill="#f5f3ff" stroke="#c4b5fd"/><text x="115" y="82" fill="#5b21b6">姓名</text>
+                    <rect x="160" y="60" width="90" height="34" fill="#f5f3ff" stroke="#c4b5fd"/><text x="205" y="82" fill="#5b21b6">年龄</text>
+                    <rect x="250" y="60" width="90" height="34" fill="#f5f3ff" stroke="#c4b5fd"/><text x="295" y="82" fill="#5b21b6">部门</text>
+                    <rect x="70" y="94" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="115" y="116" fill="#334155">张三</text>
+                    <rect x="160" y="94" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="205" y="116" fill="#334155">28</text>
+                    <rect x="250" y="94" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="295" y="116" fill="#334155">研发</text>
+                    <rect x="70" y="128" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="115" y="150" fill="#334155">李四</text>
+                    <rect x="160" y="128" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="205" y="150" fill="#334155">35</text>
+                    <rect x="250" y="128" width="90" height="34" fill="#ffffff" stroke="#e2e8f0"/><text x="295" y="150" fill="#334155">市场</text>
+                </g>
+                <path d="M400 110 H470" stroke="#94a3b8" stroke-width="2" marker-end="url(#t21Arrow)"/>
+                <text x="435" y="100" font-size="11" fill="#64748b">序列化</text>
+                <text x="640" y="40" font-size="13" font-weight="700" fill="#4c1d95">LLM：一维 token 序列</text>
+                <rect x="510" y="60" width="270" height="102" rx="8" fill="#1e1035"/>
+                <text x="525" y="85" font-size="12" fill="#e8e8f0">姓名:张三 | 年龄:28 | 部门:研发</text>
+                <text x="525" y="110" font-size="12" fill="#e8e8f0">姓名:李四 | 年龄:35 | 部门:市场</text>
+                <text x="525" y="135" font-size="12" fill="#94a3b8">→ 行序与列角色靠文本约定</text>
+                <defs><marker id="t21Arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <text x="420" y="200" font-size="12" fill="#b45309">丢失：列标题层级、行列父子关系、跨表引用</text>
+                <text x="420" y="230" font-size="12" fill="#64748b">因此需要更好的序列化、专用编码器或端到端表格模型</text>
+            </svg>
+            <figcaption>图 22-1　表格的二维结构与 LLM 的一维序列。把表格“拍扁”成 token 序列会丢掉列标题层级与行列关系，这正是表格理解方向要解决的核心矛盾。</figcaption>
+        </figure>
 
         <h2>TableGPT2：大表格模型</h2>
 
@@ -112,6 +146,30 @@
         </table>
 
         <p>在实践中，行描述法通常是在通用性和效率之间最平衡的选择。它比Markdown表格更精确（显式标注了列名），比JSON更节省token（不需要重复的引号和括号），而且便于LLM逐行处理。对于需要理解复杂嵌套表头的场景，树格式虽然token开销大，但它是唯一能保留列间层级关系的方案。</p>
+
+        <figure id="fig-tablegpt2">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="tg2Title tg2Desc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="tg2Title">TableGPT2 的三个关键设计</title>
+                <desc id="tg2Desc">专用表格编码器处理二维结构，多模态融合层对齐表格与文本，结构感知的预训练目标让模型从底层学会理解表格。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="30" y="60" width="240" height="130" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="150" y="93" font-size="13" font-weight="700" fill="#0f766e">① 表格编码器</text>
+                <text x="150" y="120" font-size="12" fill="#334155">逐行编码为向量序列</text>
+                <text x="150" y="142" font-size="12" fill="#334155">列标题与值分别编码</text>
+                <text x="150" y="164" font-size="12" fill="#64748b">保留二维结构</text>
+                <rect x="300" y="60" width="240" height="130" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="93" font-size="13" font-weight="700" fill="#6d28d9">② 多模态融合层</text>
+                <text x="420" y="120" font-size="12" fill="#334155">表格输出与文本交错对齐</text>
+                <text x="420" y="142" font-size="12" fill="#334155">建立交叉注意力</text>
+                <text x="420" y="164" font-size="12" fill="#64748b">支持“用自然语言问表格”</text>
+                <rect x="570" y="60" width="240" height="130" rx="12" fill="#7c3aed"/>
+                <text x="690" y="93" font-size="13" font-weight="700" fill="#ffffff">③ 结构感知预训练</text>
+                <text x="690" y="120" font-size="12" fill="#ede9fe">单元格值预测</text>
+                <text x="690" y="142" font-size="12" fill="#ede9fe">行列关系推理</text>
+                <text x="690" y="164" font-size="12" fill="#ede9fe">表结构重建</text>
+            </svg>
+            <figcaption>图 22-2　TableGPT2 的三个关键设计。专用编码器、多模态融合层与结构感知预训练协同，让模型从底层就按二维方式理解表格，而非把表格当作普通文本。</figcaption>
+        </figure>
 
         <pre><code># 表格序列化策略对比：行描述法 vs 树格式
 
@@ -225,6 +283,8 @@ print(result)</code></pre>
             <strong>教训总结：</strong> 嵌套表头是LLM表格理解的"阿克琉斯之踵"。通用LLM默认假设表格的第一行就是列名，当这种假设被打破时，模型的行为就变得不可预测。解决方案有两种：一是预处理步骤中将嵌套表头"拍平"为单层（通过拼接父级和子级表头），二是使用专门的表格理解模型（如TableGPT2）或结构感知的序列化方案（如我们前面提到的树格式）。在我们的项目中，一个简单的预处理——把"2024年,Q3,营收"拼成"2024年Q3_营收"——就解决了这个问题。有时候，问题不在于模型不够聪明，而在于我们用错了"接口"去喂数据。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的 TableGPT2 参数量对比（7B 超越当时 130B 通用 LLM）以及嵌套表头案例中三个模型（GPT-4o、Claude-3.5、Gemini-1.5）的表现等现象，均为教学示意，用于说明专用表格模型与序列化策略的价值，并非来自经审计的公开基准评测。</p>
+
         <p>好，表格理解与大模型集成这一章就到这里。我们讨论了表格数据的特殊性、TableGPT2这样的专用模型、多种序列化策略的对比、以及表格+文本的联合推理。这是本课程第四部分的最后一章。从下一章开始，我们将进入第五部分——LLM数据工程——讨论数据去重与质量过滤、数据混合法则、合成数据生成等更偏向工程实践的话题。我们第23章见。</p>
 
         <div class="footer-nav">
@@ -232,7 +292,7 @@ print(result)</code></pre>
             <a href="index.html">📖 返回目录</a>
             <a href="23.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

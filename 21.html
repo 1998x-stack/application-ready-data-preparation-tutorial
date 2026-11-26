@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第21章 知识图谱增强的数据处理</h1>
 
         <h2>知识图谱为什么重要</h2>
 
@@ -55,6 +58,28 @@
         <div class="highlight">
             <strong>本质认知：</strong> LLM和KG的关系不是替代，而是增强。LLM提供了"理解的广度"——它能在没有先验知识的情况下处理各种数据任务；KG提供了"理解的深度"——它确保了领域特定知识的精确性和一致性。数据准备流水线的设计目标应该是：让LLM做它擅长的事（语义理解、推理、生成），让KG做它擅长的事（知识存储、精确检索、一致性校验）。
         </div>
+
+        <figure id="fig-llm-kg">
+            <svg viewBox="0 0 840 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="lkgTitle lkgDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="lkgTitle">LLM 与知识图谱的双引擎架构</title>
+                <desc id="lkgDesc">LLM 提供隐式知识与语义理解广度，知识图谱提供显式、可验证、可更新的领域知识深度，两者互补共同支撑数据准备。</desc>
+                <rect x="0" y="0" width="840" height="280" fill="#faf8ff"/>
+                <rect x="50" y="60" width="320" height="150" rx="14" fill="#7c3aed"/>
+                <text x="210" y="95" font-size="14" font-weight="700" fill="#ffffff">LLM：理解的广度</text>
+                <text x="210" y="125" font-size="12" fill="#ede9fe">隐式知识 · 语义理解</text>
+                <text x="210" y="147" font-size="12" fill="#ede9fe">推理 / 生成 / 少样本泛化</text>
+                <text x="210" y="175" font-size="12" fill="#fde68a">弱点：领域知识不精确、难更新</text>
+                <rect x="470" y="60" width="320" height="150" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="630" y="95" font-size="14" font-weight="700" fill="#0f766e">KG：理解的深度</text>
+                <text x="630" y="125" font-size="12" fill="#334155">显式知识 · 三元组存储</text>
+                <text x="630" y="147" font-size="12" fill="#334155">可验证 / 可更新 / 一致性校验</text>
+                <text x="630" y="175" font-size="12" fill="#b45309">弱点：覆盖有限、依赖人工构建</text>
+                <path d="M370 135 H468" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4"/>
+                <text x="420" y="128" font-size="11" fill="#64748b">互补</text>
+                <text x="420" y="245" font-size="12" fill="#64748b">让 LLM 做语义理解，让 KG 存储与校验领域知识</text>
+            </svg>
+            <figcaption>图 21-1　LLM 与知识图谱的双引擎架构。LLM 提供“理解的广度”，KG 提供“理解的深度”，二者互补而非替代，是数据准备流水线的分工基础。</figcaption>
+        </figure>
 
         <h2>RACOON：KG增强的语义标注</h2>
 
@@ -127,6 +152,28 @@ def kg_enhanced_annotate(text, entity_type="药物"):
 text = "患者因细菌性肺炎入院，处方包括盘尼西林和阿莫西林。"
 result = kg_enhanced_annotate(text)
 print(json.dumps(result, ensure_ascii=False, indent=2))</code></pre>
+
+        <figure id="fig-racoon">
+            <svg viewBox="0 0 840 230" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="racTitle racDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="racTitle">RACOON 的三阶段 KG 增强标注</title>
+                <desc id="racDesc">先从待标注文本识别实体提及，再从知识图谱检索上下文三元组，最后把结构化知识转成自然语言注入提示，由 LLM 给出标注。</desc>
+                <rect x="0" y="0" width="840" height="230" fill="#faf8ff"/>
+                <rect x="35" y="70" width="225" height="90" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="147" y="103" font-size="13" font-weight="700" fill="#0f766e">① 实体发现</text>
+                <text x="147" y="127" font-size="12" fill="#64748b">识别文本中的实体提及</text>
+                <rect x="307" y="70" width="225" height="90" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="103" font-size="13" font-weight="700" fill="#6d28d9">② 图检索</text>
+                <text x="420" y="127" font-size="12" fill="#64748b">取类型/属性/关系三元组</text>
+                <rect x="580" y="70" width="225" height="90" rx="12" fill="#7c3aed"/>
+                <text x="692" y="103" font-size="13" font-weight="700" fill="#ffffff">③ 上下文增强标注</text>
+                <text x="692" y="127" font-size="12" fill="#ede9fe">三元组转自然语言注入提示</text>
+                <defs><marker id="racArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M260 115 H304" stroke="#94a3b8" stroke-width="2" marker-end="url(#racArrow)"/>
+                <path d="M532 115 H577" stroke="#94a3b8" stroke-width="2" marker-end="url(#racArrow)"/>
+                <text x="420" y="200" font-size="12" fill="#64748b">“有参考资料”的标注：让 LLM 在领域知识背景下做决策</text>
+            </svg>
+            <figcaption>图 21-2　RACOON 的三阶段 KG 增强标注。实体发现、图检索与上下文增强依次进行，把 KG 的结构化知识注入提示，使 LLM 在“有参考资料”的条件下完成专业领域标注。</figcaption>
+        </figure>
 
         <h2>实体链接与消歧</h2>
 
@@ -229,6 +276,8 @@ def resolve_entity(mention, context, kg_candidates):
             <strong>这个案例的启示：</strong> 实体链接看起来只是流水线中的一个"小环节"，但它的错误会沿着数据依赖关系向下游指数级放大。在实体链接模块中，默认的消歧策略应该是"宁可标记为待确认，也不要强行链接"。缺乏不确定性的消歧，比不做消歧更可怕——至少后者你会意识到数据有问题，前者让你在错误的数据上做出了自以为正确的决策。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的 RACOON 提升区间（12–18 个百分点）、ChatEL 准确率提升（5–8 个百分点）以及案例中的数据湖规模（约 500 万条商品记录）等数字与案例，均为教学示意，用于说明 KG 增强的效果量级与实体链接的风险，并非来自经审计的公开评测。</p>
+
         <p>OK，知识图谱增强的数据处理就讲到这里。这一章我们学习了RACOON框架的KG增强标注、ChatEL的实体链接与消歧、以及图数据库的集成模式。知识图谱让我们能够为数据注入精确的领域知识，但数据的组织结构本身——尤其是最常见的表格形式——对LLM来说仍然是一个挑战。下一章，我们就来专门讨论这个话题：表格理解与大模型集成。到时候见。</p>
 
         <div class="footer-nav">
@@ -236,7 +285,7 @@ def resolve_entity(mention, context, kg_candidates):
             <a href="index.html">📖 返回目录</a>
             <a href="22.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
