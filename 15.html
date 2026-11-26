@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第15章 实体匹配：LLM增强方法</h1>
 
         <h2>实体匹配为什么是"数据集成第一关"</h2>
 
@@ -57,6 +60,37 @@
         </div>
 
         <p>LLM的到来为实体匹配带来了革命性的变化。传统方法需要针对每个新数据集重新训练模型，而LLM凭借其强大的语义理解和上下文学习能力，可以在零样本或少样本设置下完成匹配任务。更重要的是，LLM不仅能判断两条记录是否匹配，还能解释判断的理由——这在实际业务中价值巨大。本章将深入探讨三种LLM增强的实体匹配范式：提示驱动端到端匹配、任务自适应微调匹配和多模型协同匹配。</p>
+
+        <figure id="fig-em-paradigms">
+            <svg viewBox="0 0 840 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="empTitle empDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="empTitle">三种 LLM 增强实体匹配范式的取舍</title>
+                <desc id="empDesc">提示驱动端到端匹配无需训练但成本高，任务自适应微调需要少量标注但延迟低，COMEM 多模型协同以多级分工换取高精度。</desc>
+                <rect x="0" y="0" width="840" height="300" fill="#faf8ff"/>
+                <text x="420" y="34" font-size="13" font-weight="700" fill="#4c1d95">同一实体匹配任务，三种范式在训练需求 / 成本 / 精度之间取舍</text>
+                <rect x="30" y="60" width="240" height="200" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="150" y="92" font-size="13" font-weight="700" fill="#0f766e">提示驱动端到端</text>
+                <text x="150" y="122" font-size="12" fill="#334155">零样本 / 少样本</text>
+                <text x="150" y="146" font-size="12" fill="#334155">无需训练，改提示即可</text>
+                <text x="150" y="170" font-size="12" fill="#334155">可解释：自然语言理由</text>
+                <text x="150" y="200" font-size="12" fill="#b91c1c">成本高：商用 API，秒级延迟</text>
+                <text x="150" y="228" font-size="12" fill="#64748b">适合：快速验证、小规模匹配</text>
+                <rect x="300" y="60" width="240" height="200" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="420" y="92" font-size="13" font-weight="700" fill="#6d28d9">任务自适应微调</text>
+                <text x="420" y="122" font-size="12" fill="#334155">需 50–500 条标注</text>
+                <text x="420" y="146" font-size="12" fill="#334155">本地部署，毫秒级延迟</text>
+                <text x="420" y="170" font-size="12" fill="#334155">黑盒分类器，可解释性弱</text>
+                <text x="420" y="200" font-size="12" fill="#b91c1c">跨域迁移需重新微调</text>
+                <text x="420" y="228" font-size="12" fill="#64748b">适合：大规模生产、低延迟</text>
+                <rect x="570" y="60" width="240" height="200" rx="14" fill="#7c3aed"/>
+                <text x="690" y="92" font-size="13" font-weight="700" fill="#ffffff">COMEM 多模型协同</text>
+                <text x="690" y="122" font-size="12" fill="#ede9fe">候选生成 + 轻量排序 + 精排</text>
+                <text x="690" y="146" font-size="12" fill="#ede9fe">LLM 调用量大幅下降</text>
+                <text x="690" y="170" font-size="12" fill="#ede9fe">多轮判断记录，可追溯</text>
+                <text x="690" y="200" font-size="12" fill="#fde68a">调优成本高：多模型协同</text>
+                <text x="690" y="228" font-size="12" fill="#ede9fe">适合：高精度、大规模匹配</text>
+            </svg>
+            <figcaption>图 15-1　三种 LLM 增强实体匹配范式的取舍。它们不是简单的新旧替代关系，而是在训练需求、推理成本、跨域泛化与可解释性之间各有侧重，需要按场景选择。</figcaption>
+        </figure>
 
         <h2>提示驱动的端到端实体匹配</h2>
 
@@ -250,6 +284,38 @@ trainer.train()</code></pre>
             <strong>一个实验数据：</strong> 在DBPedia-Google数据集上，纯提示驱动的GPT-4匹配F1为92.3%，微调DeBERTa的F1为93.1%。而COMEM（SBERT + DeBERTa + GPT-4三级协同）在减少85%的GPT-4调用量的情况下，达到了94.2%的F1。这说明协同不是简单的模型堆叠——合理的分工可以产生1+1>2的效果。
         </div>
 
+        <figure id="fig-comem-pipeline">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="cmpTitle cmpDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="cmpTitle">COMEM 的多阶段协同匹配流水线</title>
+                <desc id="cmpDesc">先用阻塞与嵌入检索生成候选对，再用小型模型快速评分排序，只对排名靠前的困难对调用强 LLM 精排，最后把判断结果反哺排序阶段。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="25" y="75" width="185" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="117" y="108" font-size="13" font-weight="700" fill="#0f766e">① 候选生成</text>
+                <text x="117" y="130" font-size="12" fill="#64748b">阻塞 + 嵌入检索</text>
+                <text x="117" y="148" font-size="12" fill="#64748b">排除绝大多数不匹配对</text>
+                <rect x="235" y="75" width="185" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="327" y="108" font-size="13" font-weight="700" fill="#6d28d9">② 轻量级排序</text>
+                <text x="327" y="130" font-size="12" fill="#64748b">SBERT / MiniLM 评分</text>
+                <text x="327" y="148" font-size="12" fill="#64748b">按匹配概率排序</text>
+                <rect x="445" y="75" width="185" height="95" rx="12" fill="#7c3aed"/>
+                <text x="537" y="108" font-size="13" font-weight="700" fill="#ffffff">③ LLM 精排</text>
+                <text x="537" y="130" font-size="12" fill="#ede9fe">仅精排排名靠前对</text>
+                <text x="537" y="148" font-size="12" fill="#ede9fe">强 LLM 给出最终决策</text>
+                <rect x="655" y="75" width="160" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="735" y="108" font-size="13" font-weight="700" fill="#0f766e">④ 校验反哺</text>
+                <text x="735" y="130" font-size="12" fill="#64748b">缓存匹配结果</text>
+                <text x="735" y="148" font-size="12" fill="#64748b">调整排序参数</text>
+                <defs><marker id="cmpArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="cmpArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M210 122 H232" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmpArrow)"/>
+                <path d="M420 122 H442" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmpArrow)"/>
+                <path d="M630 122 H652" stroke="#94a3b8" stroke-width="2" marker-end="url(#cmpArrow)"/>
+                <path d="M735 172 V212 H327 V172" fill="none" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#cmpArrow2)"/>
+                <text x="531" y="236" font-size="12" fill="#6d28d9">判断结果反哺排序阶段，LLM 调用量可大幅缩减</text>
+            </svg>
+            <figcaption>图 15-2　COMEM 的多阶段协同匹配流水线。绝大多数记录对在廉价的候选生成与轻量排序阶段就被排除，只有少量“困难对”进入强 LLM 精排；判断结果再反哺排序阶段，用多级分工换取高精度与低调用量。</figcaption>
+        </figure>
+
         <h2>三大匹配范式的对比</h2>
 
         <p>介绍了三种范式后，我们来做一个系统的横向对比，帮助你根据实际需求选择最合适的方案。</p>
@@ -323,6 +389,8 @@ trainer.train()</code></pre>
             <strong>教训：</strong> 实体匹配中最危险的不是"明显不匹配"或"明显匹配"的记录对——这些规则可以轻松处理。最危险的是那些"看起来匹配、实际上不匹配"的边界案例。LLM的语义理解能力和推理能力恰恰在边界案例上展现出最大的价值。在任何涉及产品匹配的项目中，请务必为"高相似度但本质不同"这类边界案例设置专门的复核环节。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的实体匹配占比（约 8%）、估算损失（超过 2 亿美元）、数据集成耗时占比（超过 60%）、标注节省（50 条达到 90% 以上 F1）、DBPedia-Google 上的 F1（92.3% / 93.1% / 94.2%）以及减少的 GPT-4 调用量（约 85%）等数字，均为教学示意，用于说明不同范式的量级关系，并非来自经审计的公开评测。</p>
+
         <p>实体匹配是数据集成的第一道关卡，但绝对不是最后一道。当记录层面的匹配搞定之后，下一个挑战来自于模式层面——不同数据源的列名、数据类型、格式规范各不相同，如何实现语义层面的对齐？下一章我们就来深入讨论<strong>模式匹配：语义对齐</strong>，看看LLM如何帮助我们把"Employee_ID"和"Staff Number"这样的异构模式智能地关联起来。</p>
 
         <div class="footer-nav">
@@ -330,7 +398,7 @@ trainer.train()</code></pre>
             <a href="index.html">📖 返回目录</a>
             <a href="16.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>

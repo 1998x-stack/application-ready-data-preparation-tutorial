@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,8 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
+
+        <h1>第16章 模式匹配：语义对齐</h1>
 
         <h2>模式匹配：比实体匹配更抽象</h2>
 
@@ -59,6 +62,33 @@
         </div>
 
         <p>LLM的语义理解能力为模式匹配带来了前所未有的突破。一个经过预训练的大语言模型，天然地理解<code>employee_id</code>和<code>staff_number</code>在语义上是等价的——它"知道"这两个词在日常使用中指向同一概念。这正好击中了传统方法最薄弱的环节。接下来，我们深入探讨LLM赋能模式匹配的几种前沿方法。</p>
+
+        <figure id="fig-schema-align">
+            <svg viewBox="0 0 840 330" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="smaTitle smaDesc" font-family="system-ui, 'PingFang SC', sans-serif">
+                <title id="smaTitle">模式匹配的五种对齐类型</title>
+                <desc id="smaDesc">从字面相同、同义异名、复合拆分、格式转换到粒度转换，对齐难度依次上升，越靠后的类型越依赖语义而非字符串相似度。</desc>
+                <rect x="0" y="0" width="840" height="330" fill="#faf8ff"/>
+                <text x="420" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#4c1d95">模式匹配：对齐的是“列”，而非“行”</text>
+                <rect x="40" y="55" width="760" height="42" rx="8" fill="#f0fdfa" stroke="#5eead4"/>
+                <text x="60" y="81" font-size="12" font-weight="700" fill="#0f766e">字面相同</text>
+                <text x="220" y="81" font-size="12" fill="#334155">customer_name → customer_name</text>
+                <text x="720" y="81" font-size="12" fill="#64748b" text-anchor="middle">易</text>
+                <rect x="40" y="105" width="760" height="42" rx="8" fill="#f0fdfa" stroke="#5eead4"/>
+                <text x="60" y="131" font-size="12" font-weight="700" fill="#0f766e">同义异名</text>
+                <text x="220" y="131" font-size="12" fill="#334155">employee_id → staff_number</text>
+                <rect x="40" y="155" width="760" height="42" rx="8" fill="#f5f3ff" stroke="#c4b5fd"/>
+                <text x="60" y="181" font-size="12" font-weight="700" fill="#6d28d9">复合拆分</text>
+                <text x="220" y="181" font-size="12" fill="#334155">full_name → first_name + last_name</text>
+                <rect x="40" y="205" width="760" height="42" rx="8" fill="#f5f3ff" stroke="#c4b5fd"/>
+                <text x="60" y="231" font-size="12" font-weight="700" fill="#6d28d9">格式转换</text>
+                <text x="220" y="231" font-size="12" fill="#334155">date_of_birth (YYYY-MM-DD) → dob (MM/DD/YYYY)</text>
+                <rect x="40" y="255" width="760" height="42" rx="8" fill="#ede9fe" stroke="#a78bfa"/>
+                <text x="60" y="281" font-size="12" font-weight="700" fill="#5b21b6">粒度转换</text>
+                <text x="220" y="281" font-size="12" fill="#334155">total_revenue_by_year → monthly_revenue</text>
+                <text x="720" y="281" font-size="12" fill="#64748b" text-anchor="middle">难</text>
+            </svg>
+            <figcaption>图 16-1　模式匹配的五种对齐类型。自上而下对齐难度依次上升，越靠后的类型越不能靠字符串相似度解决，而依赖对列语义与业务上下文的理解——这正是 LLM 的强项。</figcaption>
+        </figure>
 
         <h2>LLMSchemaBench与评测体系</h2>
 
@@ -184,6 +214,36 @@ class RetrievalAugmentedSchemaMatcher:
         <p>检索增强模式匹配的关键在于<strong>表征质量</strong>。仅仅用列名做检索是不够的——我们还需要将表名、列注释、数据类型、样例值、甚至该列在业务术语表中的定义等信息融合到向量表示中。2024年的研究表明，将多模态的模式信息融合到一个统一的文本表示中进行编码，可以将召回率（Top-10）从62%提升到89%。</p>
 
         <p>此外，检索阶段还可以引入<strong>对称映射</strong>（Symmetric Mapping）机制：对于一对模式，不仅从源模式角度检索目标模式中的候选列，也从目标模式角度反向检索源模式中的候选列。双向验证可以有效降低LLM单方向判断时的假阳性率。</p>
+
+        <figure id="fig-retrieval-schema">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="rscTitle rscDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="rscTitle">检索增强的模式匹配流程</title>
+                <desc id="rscDesc">先把每个模式元素编码入向量库，给定源列时检索 Top-K 候选，再由 LLM 精排，并用对称映射做双向验证。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="25" y="75" width="185" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="117" y="108" font-size="13" font-weight="700" fill="#0f766e">① 模式嵌入索引</text>
+                <text x="117" y="130" font-size="12" fill="#64748b">列名/类型/注释/样例</text>
+                <text x="117" y="148" font-size="12" fill="#64748b">编码为向量入库</text>
+                <rect x="235" y="75" width="185" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="327" y="108" font-size="13" font-weight="700" fill="#6d28d9">② 候选检索 Top-K</text>
+                <text x="327" y="130" font-size="12" fill="#64748b">近似最近邻搜索</text>
+                <text x="327" y="148" font-size="12" fill="#64748b">硬约束预过滤</text>
+                <rect x="445" y="75" width="185" height="95" rx="12" fill="#7c3aed"/>
+                <text x="537" y="108" font-size="13" font-weight="700" fill="#ffffff">③ LLM 精排</text>
+                <text x="537" y="130" font-size="12" fill="#ede9fe">逐对判断 / 一次性排序</text>
+                <text x="537" y="148" font-size="12" fill="#ede9fe">给出匹配决策</text>
+                <rect x="655" y="75" width="160" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="735" y="108" font-size="13" font-weight="700" fill="#0f766e">④ 对称映射</text>
+                <text x="735" y="130" font-size="12" fill="#64748b">双向检索交叉验证</text>
+                <text x="735" y="148" font-size="12" fill="#64748b">降低单方向假阳性</text>
+                <defs><marker id="rscArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M210 122 H232" stroke="#94a3b8" stroke-width="2" marker-end="url(#rscArrow)"/>
+                <path d="M420 122 H442" stroke="#94a3b8" stroke-width="2" marker-end="url(#rscArrow)"/>
+                <path d="M630 122 H652" stroke="#94a3b8" stroke-width="2" marker-end="url(#rscArrow)"/>
+                <text x="420" y="215" font-size="12" fill="#64748b">K 越大候选越多，但检索噪声会稀释 LLM 注意力，精度反降</text>
+            </svg>
+            <figcaption>图 16-2　检索增强的模式匹配流程。全量模式先编码入库，源列经近似最近邻检索出 Top-K 候选，再交 LLM 精排；对称映射做双向交叉验证，抑制单方向判断的假阳性。</figcaption>
+        </figure>
 
         <div class="warning">
             <strong>踩坑提醒：</strong> 检索阶段最忌讳的是"检索噪声过多"。当Top-K候选列中有大量不相关的列时，LLM的注意力会被分散，导致精排阶段的准确率显著下降。我们曾经在一个含有3000多张表的企业数据仓库上做实验，发现当K从20增加到50时，LLM精排的准确率从91%降到了83%。原因很简单——候选列表越长，LLM越难做出精准的区分。建议K值控制在10-20之间，并且在检索时加入数据类型和表领域等硬约束条件进行预过滤。
@@ -320,6 +380,8 @@ class RetrievalAugmentedSchemaMatcher:
             <strong>经验法则：</strong> 在做模式匹配时，永远不要只看列名称。至少要从三个层面交叉验证：列名称是否语义等价，数据类型是否兼容，值的分布和格式是否一致。名称相同但含义不同（同名异义）比名称不同但含义相同（同义异名）更危险，因为它会被自动匹配规则"静默地"处理掉，连人工复核的机会都没有。
         </div>
 
+        <p><strong>标注说明：</strong>本章涉及的工时占比（约 35%）、零样本 F1（82.3% → 87.6%）、Top-10 召回率（62% → 89%）、K 从 20 增至 50 时的精排准确率（91% → 83%）、差错记录数（约 120 万条）与掐置交易数（超过 5000 笔）等数字，均为教学示意，用于说明模式匹配的难度分布与量级，并非来自经审计的公开评测。</p>
+
         <p>模式对齐是数据集成的骨架——它决定了数据后续如何被映射、转换和加载。但模式匹配本身也面临一个更根本的限制：当两个数据源来自完全不同的领域时，即使模式层对齐了，记录层仍然可能"对不上"。这就是跨域零样本实体匹配要解决的问题。下一章我们将进入<strong>跨域零样本实体匹配</strong>的探讨，看看LLM如何在完全陌生的数据领域中依然游刃有余。</p>
 
         <div class="footer-nav">
@@ -327,7 +389,7 @@ class RetrievalAugmentedSchemaMatcher:
             <a href="index.html">📖 返回目录</a>
             <a href="17.html">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
