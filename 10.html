@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第10章 混合零样本错误检测</h2>
+        <h1>第10章 混合零样本错误检测</h1>
 
         <p>大家好，我是你们的讲师。上一章的LLMClean虽然强大，但它有一个前提假设：你需要领域本体知识来做OFD生成。如果面对一个全新的、你完全不熟悉的领域——比如你训练了一个"奢侈品鉴定数据集"或者"深海生物观测数据集"——你哪来的领域本体？这一章我们来聊<strong>ZeroED</strong>，一个不需要任何领域知识、不需要一条标注数据的混合零样本错误检测框架。</p>
 
@@ -69,6 +70,33 @@
         <p>最后是<strong>ML分类器</strong>，这是一个轻量级的监督分类器（通常是XGBoost或随机森林），它学习LLM的历史判断模式，从而在后续批次中替代LLM进行大多数判断。随着LLM标记的数据逐渐增多，ML分类器的准确度也在提升。在ZeroED的设计中，ML分类器不要求大规模训练数据——最初只用几百条LLM判断过的样本就能启动。</p>
 
         <p>ZeroED与传统方法的一个关键不同在于它的<strong>反馈闭环</strong>。传统方法中，错误检测是一次性的；ZeroED中，LLM的判断会经过人工抽样验证后反馈到ML分类器和提示模板中，形成一个持续改进的正向循环。</p>
+
+        <figure id="fig-zeroed-arch">
+            <svg viewBox="0 0 840 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="zedTitle zedDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="zedTitle">ZeroED 的混合 LLM-ML 架构</title>
+                <desc id="zedDesc">模式分析器解读表结构并筛出可疑列，仅在必要时调用 LLM 推理引擎深度判断，结果再交给轻量 ML 分类器学习，人工抽样验证后反馈更新提示与分类器。</desc>
+                <rect x="0" y="0" width="840" height="300" fill="#faf8ff"/>
+                <rect x="35" y="105" width="215" height="90" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="142" y="138" font-size="13" font-weight="700" fill="#0f766e">① 模式分析器</text>
+                <text x="142" y="160" font-size="12" fill="#64748b">列名 / 类型 / 统计摘要</text>
+                <text x="142" y="178" font-size="12" fill="#64748b">筛出可疑列与依赖异常</text>
+                <rect x="315" y="105" width="215" height="90" rx="12" fill="#7c3aed"/>
+                <text x="422" y="138" font-size="13" font-weight="700" fill="#ffffff">② LLM 推理引擎</text>
+                <text x="422" y="160" font-size="12" fill="#ede9fe">仅对灰色区域会诊</text>
+                <text x="422" y="178" font-size="12" fill="#ede9fe">标准化推理模板</text>
+                <rect x="595" y="105" width="215" height="90" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="702" y="138" font-size="13" font-weight="700" fill="#6d28d9">③ ML 分类器</text>
+                <text x="702" y="160" font-size="12" fill="#64748b">学习 LLM 判断模式</text>
+                <text x="702" y="178" font-size="12" fill="#64748b">承接后续批次</text>
+                <defs><marker id="zedArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="zedArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f97316"/></marker></defs>
+                <path d="M250 150 H312" stroke="#94a3b8" stroke-width="2" marker-end="url(#zedArrow)"/>
+                <path d="M530 150 H592" stroke="#94a3b8" stroke-width="2" marker-end="url(#zedArrow)"/>
+                <path d="M702 195 V255 H142 V198" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#zedArrow2)"/>
+                <text x="422" y="275" font-size="12" fill="#c2410c">人工抽样验证 → 反馈更新提示模板与分类器</text>
+            </svg>
+            <figcaption>图 10-1　ZeroED 的混合 LLM-ML 架构。模式分析器先做低成本过滤，LLM 只在灰色区域介入，ML 分类器承接稳定判断；三者由人工抽样验证串成持续改进的反馈闭环。</figcaption>
+        </figure>
 
         <h2>推理引导的检测策略</h2>
 
@@ -98,6 +126,31 @@
         <div class="tip">
             <strong>效率数据：</strong>在ZeroED的Benchmark测试中，第一层统计筛选过滤掉了约70%-80%的明显正常数据。这使得LLM只需要处理剩下的20%-30%的"灰色区域"，整体检测效率提升了4-5倍。经过3-5轮迭代后，ML分类器可以覆盖LLM约60%的判断，进一步降低成本。
         </div>
+
+        <figure id="fig-zeroed-cascade">
+            <svg viewBox="0 0 840 230" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="zecTitle zecDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="zecTitle">ZeroED 的三层递进检测流程</title>
+                <desc id="zecDesc">第一层纯统计筛选过滤大部分正常数据，第二层由 LLM 推理可疑区域，第三层把结果反馈给 ML 分类器并对不确定项做人工复核。</desc>
+                <rect x="0" y="0" width="840" height="230" fill="#faf8ff"/>
+                <rect x="45" y="70" width="230" height="90" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="160" y="103" font-size="13" font-weight="700" fill="#0f766e">① 统计筛选</text>
+                <text x="160" y="125" font-size="12" fill="#64748b">均值 / 标准差 / 缺失率</text>
+                <text x="160" y="143" font-size="12" fill="#64748b">零成本，过滤明显正常值</text>
+                <rect x="305" y="70" width="230" height="90" rx="12" fill="#7c3aed"/>
+                <text x="420" y="103" font-size="13" font-weight="700" fill="#ffffff">② 模式推理</text>
+                <text x="420" y="125" font-size="12" fill="#ede9fe">LLM 解释可疑值成因</text>
+                <text x="420" y="143" font-size="12" fill="#ede9fe">表结构 + 列描述 + 候选</text>
+                <rect x="565" y="70" width="230" height="90" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="680" y="103" font-size="13" font-weight="700" fill="#6d28d9">③ 验证反馈</text>
+                <text x="680" y="125" font-size="12" fill="#64748b">反馈训练 ML 分类器</text>
+                <text x="680" y="143" font-size="12" fill="#64748b">不确定项转人工复核</text>
+                <defs><marker id="zecArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M275 115 H302" stroke="#94a3b8" stroke-width="2" marker-end="url(#zecArrow)"/>
+                <path d="M535 115 H562" stroke="#94a3b8" stroke-width="2" marker-end="url(#zecArrow)"/>
+                <text x="420" y="205" font-size="12" fill="#64748b">越往后越贵：成本从左往右递增，只在必要时才动用 LLM</text>
+            </svg>
+            <figcaption>图 10-2　ZeroED 的三层递进检测流程。统计层零成本完成粗筛，LLM 层只处理灰色区域，反馈层把判断沉淀给 ML 分类器并把不确定项交给人；计算成本沿流程递增，因此调用顺序被刻意设计成由廉到贵。</figcaption>
+        </figure>
 
         <h2>代价敏感的检测优化</h2>
 
@@ -143,6 +196,8 @@
             <strong>案例启示：</strong>这个案例表明，零样本错误检测的最大优势是"启动速度快"，最大风险是"LLM的固有偏见"。在使用ZeroED时，我建议团队做好三件事：一是在最初几天投入较多的审核精力，快速建立白名单和提示优化；二是对LLM的"高敏感度"保持警惕——宁可暂时容忍一些假阳性，也不要让假阴性漏掉真正的错误；三是针对每个新领域的特性，设计领域定制的提示模板。随着领域的累积，ZeroED的效果会越来越好。
         </div>
 
+        <p><strong>标注说明：</strong>本章出现的准确率（62% → 85%）、成本下降（约 79%）、准确率损失（不到 3%）、统计层过滤比例（70%–80%）、效率倍数（4–5 倍）、ML 分类器覆盖率（约 60%）以及置信度阈值（0.95 / 0.7）等数字，均为教学示意，用来说明混合路由的量级关系，并非来自公开论文的审计结果。</p>
+
         <p>好了，关于零样本错误检测的讨论告一段落。从第八到第十章，我们围绕"检测"做了充分讨论。但数据清洗中还有另一个核心问题始终存在：<strong>缺失值</strong>。不是每个错误都有"错误的值"可以修复——有时候值直接不存在。下一章，我们进入数据填补与缺失值修复。</p>
 
         <div class="footer-nav">
@@ -151,7 +206,7 @@
             <a href="11.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>

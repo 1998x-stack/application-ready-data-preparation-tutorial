@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,10 +42,10 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-        <h2>第12章 函数合成驱动的清洗</h2>
+        <h1>第12章 函数合成驱动的清洗</h1>
 
         <p>大家好，我是你们的讲师。前面几章我们一直围绕着"LLM直接操作数据"这个思路展开：LLM逐行检测错误、LLM逐行修复缺失值。这种方式在逻辑上很自然，但在工程上并不高效——每一条数据都要调用一次LLM，成本和延迟都无法接受。有没有一种方法，让LLM不直接操作数据，而是生成操作数据的<strong>代码</strong>？一次生成，反复执行，既高效又可审计。这就是函数合成驱动的清洗思路。</p>
 
@@ -59,6 +60,36 @@
         <div class="highlight">
             <strong>关键区别：</strong>LLM直接清洗 = 操作数据；函数合成 = 操作代码。后者将LLM从"数据操作者"降级为"代码生成者"，将执行权交还给确定性程序。数据工程师审核LLM生成的代码（一次审核），然后安心运行（反复执行）。
         </div>
+
+        <figure id="fig-funcsyn-flow">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="fsfTitle fsfDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="fsfTitle">函数合成驱动的清洗流程</title>
+                <desc id="fsfDesc">把数据样本与错误描述交给 LLM 生成清洗函数，人工审核一次后，由确定性执行引擎在流水线中反复运行。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="25" y="70" width="180" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="115" y="103" font-size="13" font-weight="700" fill="#0f766e">① 样本 + 描述</text>
+                <text x="115" y="125" font-size="12" fill="#64748b">数据样本</text>
+                <text x="115" y="143" font-size="12" fill="#64748b">错误模式说明</text>
+                <rect x="230" y="70" width="180" height="95" rx="12" fill="#7c3aed"/>
+                <text x="320" y="103" font-size="13" font-weight="700" fill="#ffffff">② LLM 生成函数</text>
+                <text x="320" y="125" font-size="12" fill="#ede9fe">输出清洗代码</text>
+                <text x="320" y="143" font-size="12" fill="#ede9fe">类型注解 + docstring</text>
+                <rect x="435" y="70" width="180" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="525" y="103" font-size="13" font-weight="700" fill="#6d28d9">③ 人工审核（一次）</text>
+                <text x="525" y="125" font-size="12" fill="#64748b">代码审查与版本化</text>
+                <text x="525" y="143" font-size="12" fill="#64748b">纳入版本控制</text>
+                <rect x="640" y="70" width="180" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="730" y="103" font-size="13" font-weight="700" fill="#0f766e">④ 确定性执行</text>
+                <text x="730" y="125" font-size="12" fill="#64748b">同样输入</text>
+                <text x="730" y="143" font-size="12" fill="#64748b">永远同样输出</text>
+                <defs><marker id="fsfArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M205 117 H227" stroke="#94a3b8" stroke-width="2" marker-end="url(#fsfArrow)"/>
+                <path d="M410 117 H432" stroke="#94a3b8" stroke-width="2" marker-end="url(#fsfArrow)"/>
+                <path d="M615 117 H637" stroke="#94a3b8" stroke-width="2" marker-end="url(#fsfArrow)"/>
+                <text x="420" y="215" font-size="12" fill="#64748b">关键点：审核一次，复现无数次；执行权交还给确定性程序</text>
+            </svg>
+            <figcaption>图 12-1　函数合成驱动的清洗流程。LLM 由“操作数据”转为“生成代码”，人工只审核一次，随后由确定性执行引擎反复运行，兼顾效率与可审计性。</figcaption>
+        </figure>
 
         <h2>LLM合成数据清洗函数</h2>
 
@@ -137,6 +168,30 @@ def clean_phone(phone: str) -> str:
             <strong>生产实践：</strong>在一个电商数据平台中，数据团队使用LLM每两周生成一批新的验证规则。规则部署后，通过监控"规则触发率"来评估效果。如果某条规则连续一周触发率为零，系统自动标记该规则为"可能已过时"并提示团队审查。这种"规则生命周期管理"将规则维护成本降低了约60%。
         </div>
 
+        <figure id="fig-rule-loop">
+            <svg viewBox="0 0 840 245" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="frlTitle frlDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="frlTitle">验证规则的自动生成闭环</title>
+                <desc id="frlDesc">LLM 先分析人工标记的错误行总结错误模式，再编译成可执行验证函数并部署到数据入口做实时监控。</desc>
+                <rect x="0" y="0" width="840" height="245" fill="#faf8ff"/>
+                <rect x="35" y="80" width="225" height="85" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="147" y="113" font-size="13" font-weight="700" fill="#0f766e">① 分析已标记错误行</text>
+                <text x="147" y="135" font-size="12" fill="#64748b">人工抽样标注样例</text>
+                <rect x="307" y="80" width="225" height="85" rx="12" fill="#7c3aed"/>
+                <text x="420" y="113" font-size="13" font-weight="700" fill="#ffffff">② LLM 总结错误模式</text>
+                <text x="420" y="135" font-size="12" fill="#ede9fe">归纳可复用规则</text>
+                <rect x="580" y="80" width="225" height="85" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="692" y="113" font-size="13" font-weight="700" fill="#6d28d9">③ 编译验证函数</text>
+                <text x="692" y="135" font-size="12" fill="#64748b">部署到数据入口监控</text>
+                <defs><marker id="frlArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="frlArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M260 122 H304" stroke="#94a3b8" stroke-width="2" marker-end="url(#frlArrow)"/>
+                <path d="M532 122 H577" stroke="#94a3b8" stroke-width="2" marker-end="url(#frlArrow)"/>
+                <path d="M692 168 V205 H147 V168" fill="none" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#frlArrow2)"/>
+                <text x="420" y="230" font-size="12" fill="#6d28d9">触发率监控：长期零触发即标记“可能已过时”，提示团队审查</text>
+            </svg>
+            <figcaption>图 12-2　验证规则的自动生成闭环。LLM 从已标记错误中归纳模式并编译为可执行验证函数，部署到数据入口做实时质量监控；触发率反过来驱动规则的生命周期管理。</figcaption>
+        </figure>
+
         <h2>程序化数据修复模式</h2>
 
         <p>函数合成不仅可以处理单个字段的问题，还可以解决复杂的跨字段修复。我们先来对比一下不同修复模式的特性。</p>
@@ -186,6 +241,8 @@ def clean_phone(phone: str) -> str:
             <strong>结果对比：</strong>人工编写的正则清洗方案覆盖率65%、准确率91%。LLM生成的清洗函数覆盖率89%、准确率97%。更重要的是，LLM生成代码只用了15分钟迭代，而人工方案消耗了两周的工作量。这个案例生动说明了"LLM作为代码生成器"在数据清洗中的巨大潜力——它不需要替代数据工程师，而是让工程师从繁琐的编码中解放出来。
         </div>
 
+        <p><strong>标注说明：</strong>本节的覆盖率（人工 65% → 生成函数 89%）、准确率（91% → 97%）、迭代耗时（两周 → 15 分钟）以及规则维护成本下降（约 60%）均为教学示意，用于说明函数合成相对人工正则的量级差异，并非来自经审计的公开评测。</p>
+
         <p>不过，函数合成并非万能。当错误模式高度多样化、无法被几行代码概括时，函数合成的效果就会打折扣。这时需要结合之前的LLM逐行修复方法做分层处理。下一章，我们将进入一个与错误检测密切相关但有着本质区别的话题——<strong>异常检测</strong>。虽然听起来很像，但"异常"和"错误"其实是两种不同的概念。</p>
 
         <div class="footer-nav">
@@ -194,7 +251,7 @@ def clean_phone(phone: str) -> str:
             <a href="13.html">下一章 →</a>
         </div>
 
-    </div>
+    </main>
 </div>
 </div>
 </body>
