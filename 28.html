@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="theme.css">
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>🧹 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 数据准备的演进与新范式</a></li>
@@ -41,16 +42,16 @@
             <li><a href="27.html">第27章 数据治理、溯源与安全保障</a></li>
             <li><a href="28.html" class="active">第28章 实战：构建LLM数据准备系统</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main id="content" class="main-content">
 
-<h2>第28章 实战：构建LLM数据准备系统</h2>
+<h1>第28章 实战：构建LLM数据准备系统</h1>
 
 <p>大家好！欢迎来到本教程的最后一章——也是最具实战意义的一章。过去的27章我们从数据准备的新范式开始，一路走过了LLM作为数据操作符、数据错误检测、实体匹配、数据集成、数据标注、端到端框架、数据治理——每一个主题都像一块拼图。今天，我们要把这些拼图拼成一幅完整的图画：<strong>一个从原始数据到应用就绪的端到端LLM数据准备系统</strong>。</p>
 
 <p>我们的项目场景是这样的：你是一家AI创业公司的数据工程师，公司准备训练一个医疗健康领域的对话模型。原始数据来自多个渠道——互联网医疗论坛的帖子、电子病历摘要、医学论文摘要、药房评论。你的任务是构建一个完整的数据准备流水线，将这些杂乱无章的原始数据转化为高质量、合规、标注完整的训练数据。Let's go!</p>
 
-<h3>28.1 项目总览：从原始数据到应用就绪</h3>
+<h2>28.1 项目总览：从原始数据到应用就绪</h2>
 
 <p>整个系统分为四个阶段，每个阶段对应一个子系统：</p>
 
@@ -96,7 +97,37 @@
     </tbody>
 </table>
 
-<h3>28.2 阶段一：数据摄入与质量诊断</h3>
+        <figure id="fig-system-overview">
+            <svg viewBox="0 0 840 260" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="syoTitle syoDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="syoTitle">端到端数据准备系统的四个阶段</title>
+                <desc id="syoDesc">从多源原始数据出发，经数据摄入与质量诊断、清洗与集成、标注与富化，最终抵达质量验证与部署，输出可发布的训练数据集。</desc>
+                <rect x="0" y="0" width="840" height="260" fill="#faf8ff"/>
+                <rect x="25" y="75" width="180" height="95" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="115" y="108" font-size="13" font-weight="700" fill="#0f766e">① 摄入与诊断</text>
+                <text x="115" y="130" font-size="12" fill="#64748b">多源摄入 + 质量画像</text>
+                <text x="115" y="148" font-size="12" fill="#64748b">第 7~8、20 章</text>
+                <rect x="230" y="75" width="180" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="320" y="108" font-size="13" font-weight="700" fill="#6d28d9">② 清洗与集成</text>
+                <text x="320" y="130" font-size="12" fill="#64748b">清洗 / 去重 / 匹配</text>
+                <text x="320" y="148" font-size="12" fill="#64748b">第 9~18 章</text>
+                <rect x="435" y="75" width="180" height="95" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="525" y="108" font-size="13" font-weight="700" fill="#6d28d9">③ 标注与富化</text>
+                <text x="525" y="130" font-size="12" fill="#64748b">LLM 标注 + KG 增强</text>
+                <text x="525" y="148" font-size="12" fill="#64748b">第 19~22 章</text>
+                <rect x="640" y="75" width="180" height="95" rx="12" fill="#7c3aed"/>
+                <text x="730" y="108" font-size="13" font-weight="700" fill="#ffffff">④ 验证与部署</text>
+                <text x="730" y="130" font-size="12" fill="#ede9fe">多关卡验证 + 发布</text>
+                <text x="730" y="148" font-size="12" fill="#ede9fe">第 7、23~27 章</text>
+                <defs><marker id="syoArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker></defs>
+                <path d="M205 122 H227" stroke="#94a3b8" stroke-width="2" marker-end="url(#syoArrow)"/>
+                <path d="M410 122 H432" stroke="#94a3b8" stroke-width="2" marker-end="url(#syoArrow)"/>
+                <path d="M615 122 H637" stroke="#94a3b8" stroke-width="2" marker-end="url(#syoArrow)"/>
+                <text x="420" y="215" font-size="12" fill="#64748b">从原始数据到应用就绪：一条可复现、可审计的全自动流水线</text>
+            </svg>
+            <figcaption>图 28-1　端到端数据准备系统的四个阶段。摄入与诊断、清洗与集成、标注与富化、验证与部署逐级推进，每一阶段都能对应到本教程的具体章节方法。</figcaption>
+        </figure>
+
+<h2>28.2 阶段一：数据摄入与质量诊断</h2>
 
 <p>系统首先需要从四个数据源摄入原始数据。每个数据源的格式、质量、覆盖范围都不同：</p>
 
@@ -161,7 +192,7 @@ quality_report = {
     <p>教训：质量画像的维度设计必须<strong>与下游任务对齐</strong>。通用的"流畅度"标准在专业领域可能适得其反。正确的做法是用少量领域专家标注的数据来校准质量评分模型，或者设计领域特定的质量维度（如"术语密度"、"医学相关性"）。</p>
 </div>
 
-<h3>28.3 阶段二：清洗与集成流水线</h3>
+<h2>28.3 阶段二：清洗与集成流水线</h2>
 
 <p>在拿到质量报告后，我们进入清洗与集成阶段。这一阶段的核心目标是：将四个来源的数据统一清洗标准、去重、完成实体匹配和模式对齐，输出一个统一的干净数据集。</p>
 
@@ -216,7 +247,7 @@ unified_schema = {
     "pii_cleaned": "bool",      # PII是否已脱敏
 }</code></pre>
 
-<h3>28.4 阶段三：标注与富化</h3>
+<h2>28.4 阶段三：标注与富化</h2>
 
 <p>清洗完成后的数据集是"干净的但原始的"——它还没有标注，也没有领域知识的增强。阶段三的任务就是使用LLM自动标注和知识图谱来富化数据。</p>
 
@@ -260,7 +291,7 @@ process:
     <strong>💡 效率优化贴士</strong>：LLM标注是整条流水线中最昂贵的环节（API调用成本占流水线总成本的60%~80%）。以下几个技巧可以大幅降低成本：(1) 先用规则+小模型做预筛选，只有低置信度的样本才交给LLM；(2) 使用batch API减少网络开销；(3) 对同一段文本的多个标注任务用同一个LLM调用完成（多任务提示）；(4) 缓存LLM标注结果——相同或相似的文本不需要重复调用API。
 </div>
 
-<h3>28.5 阶段四：质量验证与部署</h3>
+<h2>28.5 阶段四：质量验证与部署</h2>
 
 <p>最后一阶段是质量验证和数据集发布。这不仅是一个"质量关卡"，也是整个数据治理体系的落地环节。</p>
 
@@ -320,6 +351,35 @@ process:
         </tr>
     </tbody>
 </table>
+
+        <figure id="fig-release-gates">
+            <svg viewBox="0 0 840 250" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="rlgTitle rlgDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
+                <title id="rlgTitle">质量验证关卡与持续监控闭环</title>
+                <desc id="rlgDesc">格式、质量、PII、标注一致性、分布与溯源等验证关卡守卫发布；发布后由漂移监控与下游性能监控驱动重新准备与迭代。</desc>
+                <rect x="0" y="0" width="840" height="250" fill="#faf8ff"/>
+                <rect x="40" y="65" width="230" height="120" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="155" y="95" font-size="13" font-weight="700" fill="#0f766e">① 验证关卡</text>
+                <text x="155" y="120" font-size="12" fill="#334155">格式 / 质量 / PII</text>
+                <text x="155" y="142" font-size="12" fill="#334155">标注一致性 / 分布 / 溯源</text>
+                <text x="155" y="166" font-size="12" fill="#64748b">阻断性失败则停止发布</text>
+                <rect x="330" y="65" width="180" height="120" rx="12" fill="#7c3aed"/>
+                <text x="420" y="110" font-size="13" font-weight="700" fill="#ffffff">② 发布</text>
+                <text x="420" y="134" font-size="12" fill="#ede9fe">写入数据湖</text>
+                <text x="420" y="154" font-size="12" fill="#ede9fe">生成合规报告</text>
+                <rect x="570" y="65" width="230" height="120" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="685" y="95" font-size="13" font-weight="700" fill="#6d28d9">③ 持续监控</text>
+                <text x="685" y="120" font-size="12" fill="#334155">数据漂移检测</text>
+                <text x="685" y="142" font-size="12" fill="#334155">下游性能监控</text>
+                <text x="685" y="166" font-size="12" fill="#64748b">触发重新准备</text>
+                <defs><marker id="rlgArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#94a3b8"/></marker>
+                    <marker id="rlgArrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#6d28d9"/></marker></defs>
+                <path d="M270 125 H327" stroke="#94a3b8" stroke-width="2" marker-end="url(#rlgArrow)"/>
+                <path d="M510 125 H567" stroke="#94a3b8" stroke-width="2" marker-end="url(#rlgArrow)"/>
+                <path d="M685 185 V215 H155 V188" fill="none" stroke="#6d28d9" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#rlgArrow2)"/>
+                <text x="420" y="238" font-size="12" fill="#6d28d9">漂移或性能下降 → 回到校验与重跑，形成持续迭代闭环</text>
+            </svg>
+            <figcaption>图 28-2　质量验证关卡与持续监控闭环。多道验证关卡守卫发布，发布后由漂移与下游性能监控驱动“重新准备—再验证”，把一次性流水线变成持续迭代的系统。</figcaption>
+        </figure>
 
 <p><strong>部署与持续迭代</strong>：验证通过的数据集被发布到数据湖的"已发布"区，同时向MLflow等平台发送发布事件。至此，一条从原始数据到应用就绪的数据集的全自动流水线就建设完成了。但这不是终点——流水线需要持续的监控和迭代。</p>
 
@@ -391,7 +451,7 @@ def scheduled_quality_check(check_interval_days=7):
 
     return drift_report</code></pre>
 
-<h3>28.6 课程总结与学习路径</h3>
+<h2>28.6 课程总结与学习路径</h2>
 
 <p>到这里，我们的28章教程就全部结束了。让我带大家做一个简短的回顾：</p>
 
@@ -405,7 +465,7 @@ def scheduled_quality_check(check_interval_days=7):
 
 <p><strong>第五篇章（第26~28章）</strong>——最后三章是整合篇。端到端框架让整个流水线标准化，数据治理确保合规安全，今天的实战项目则把一切都串了起来。</p>
 
-<h3>28.7 最后一课：数据准备的"第一性原理"</h3>
+<h2>28.7 最后一课：数据准备的"第一性原理"</h2>
 
 <p>作为课程的最后一章最后一节，我想分享几个贯穿整个课程的<strong>第一性原理</strong>——这些原则不依赖任何具体的技术或工具，是数据准备这个领域的"底层密码"。</p>
 
@@ -417,6 +477,8 @@ def scheduled_quality_check(check_interval_days=7):
     <p><strong>原理四：数据准备不是一个阶段，而是一个持续的过程。</strong>不存在"一劳永逸"的数据集。业务在变、用户需求在变、监管要求在变、模型能力在变——你的数据准备系统必须能够持续适应这些变化。构建闭环、持续迭代的能力，比构建一次性完美流水线重要得多。</p>
 </div>
 
+        <p><strong>标注说明：</strong>本章项目案例中的数据规模（论坛约 500 万条、病历约 50 万条、论文约 200 万篇、药房评论约 100 万条）、质量画像的均分（约 3.8/5）、LLM 标注成本占比（60%–80%）以及各验证阈值（质量 ≥ 4.0、PII 检出率 &lt; 0.1%、Kappa &gt; 0.8、PSI &lt; 0.2）等数字，均为教学示意，用于说明端到端系统的设计取舍与量级，并非来自经审计的公开产出。</p>
+
 <p>最后，送给大家一句话共勉：<strong>在AI的世界里，模型决定了天花板的高度，但数据决定了你能否触达这个天花板。</strong>希望这套教程能成为你数据工程之路上的指南针。编码愉快，我们下个教程再见！</p>
 
         <div class="footer-nav">
@@ -424,7 +486,7 @@ def scheduled_quality_check(check_interval_days=7):
             <a href="index.html">📖 返回目录</a>
             <a href="javascript:void(0)">下一章 →</a>
         </div>
-    </div>
+    </main>
 </div>
 </div>
 </body>
