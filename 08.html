@@ -435,6 +435,8 @@ ADD CONSTRAINT chk_amount CHECK (amount > 0 AND amount &lt; 1000000);
 
         <p>好的，关于基于LLM的错误检测我们先聊到这里。下一章，我们将进入真正的"清洗"环节——有了检测结果之后，如何让LLM不仅找出错误，还能理解上下文并给出修复建议。这就是我们要讨论的<strong>LLMClean</strong>方法。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处：本章“规则约束 → LLM 错误检测”的脉络，属于本课程主线综述《Can LLMs Clean Up Your Mess? A Survey of Application-Ready Data Preparation with LLMs》（<a href="https://arxiv.org/abs/2601.17058">arXiv:2601.17058</a>）归纳的“数据清洗”任务（其子类涵盖标准化、错误处理与填充）；综述对传统方法与 LLM 方法的优势/局限均有归纳，本章案例细节为教学示意。</p>
+
         <div class="footer-nav">
             <a href="07.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
