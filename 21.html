@@ -285,7 +285,9 @@ pre { max-width: 100%; }
 
         <p>具体流程分为三个阶段。第一阶段是实体发现：从待标注文本中识别出可能链接到KG中的实体提及（Entity Mentions）。第二阶段是图检索：在KG中查找这些实体的上下文三元组，包括该实体的类型标签、属性值、以及与其它实体的关系。第三阶段是上下文增强标注：将检索到的三元组结构化为自然语言描述，作为辅助信息加入Prompt，再由LLM给出最终标注。</p>
 
-        <p>一个典型的RACOON标注Prompt会包含三部分：原始数据、KG检索到的背景知识、标注指令。实验结果表明，在医疗、法律、金融等专业领域，RACOON的标注准确率比纯LLM方案高出12到18个百分点，尤其是在长尾实体和罕见类别上的提升最为显著。</p>
+        <p>一个典型的RACOON标注Prompt会包含三部分：原始数据、KG检索到的背景知识、标注指令。论文报告：在列类型标注（Column Type Annotation, CTA）基准上，RACOON 相比不加 KG 的纯 LLM 推理最多取得 0.21 的 micro F1 提升，长尾与罕见类型上的收益更明显。</p>
+
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">数据来源：<a href="https://arxiv.org/abs/2409.14556">RACOON 论文（arXiv:2409.14556）</a>，作者为 University of Washington 团队；指标取自该论文摘要，尚未独立复现。本节的三阶段流程讲解为教学概述。</p>
 
         <pre><code># RACOON风格：KG增强的语义标注
 import json
