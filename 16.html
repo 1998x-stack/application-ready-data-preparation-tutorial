@@ -455,6 +455,8 @@ class RetrievalAugmentedSchemaMatcher:
 
         <p>Harmonia的Agent架构基于<strong>ReAct</strong>（Reasoning + Acting）范式：Agent在每一步思考当前的状态和进度，决定下一步应该调用什么工具，然后执行工具调用，观察结果，再进入下一轮思考。这种循环持续进行，直到Agent确信模式匹配已完成为止。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处：Harmonia 出自 <a href="https://arxiv.org/abs/2502.07132">arXiv:2502.07132</a>（Interactive Data Harmonization with LLM Agents，NYU 等）；原文将其定位为面向临床数据协调场景的 proof-of-concept 原型，通过 LLM 编排数据集成原语并在必要时生成自定义代码。本节对其编排流程的讲解为教学概述。</p>
+
         <pre><code>class HarmoniaAgent:
     def __init__(self, llm):
         self.llm = llm
