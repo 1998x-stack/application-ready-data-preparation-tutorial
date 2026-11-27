@@ -252,7 +252,7 @@ pre { max-width: 100%; }
         <p>很多同学在概念上模糊了"异常"和"错误"，在项目中吃过不少亏。我们先说清楚这两个概念的区别。</p>
 
         <table>
-            <tr><th>维度</th><th>错误检测</th><th>异常检测</th></tr>
+            <tr><th scope="col">维度</th><th scope="col">错误检测</th><th scope="col">异常检测</th></tr>
             <tr><td>目标</td><td>找到<strong>不正确的</strong>数据</td><td>找到<strong>不寻常的</strong>数据</td></tr>
             <tr><td>判断标准</td><td>客观规范（格式、约束、业务规则）</td><td>统计分布、模式偏离程度</td></tr>
             <tr><td>错误/异常的含义</td><td>一定需要修复</td><td>可能需要调查，不一定是错误</td></tr>
@@ -349,7 +349,7 @@ shipping_address="西藏自治区那曲市色尼区浙江西路8号"
         <p>在异常检测的实际部署中，我强烈推荐一种<strong>统计+LLM混合</strong>的方案。这不是二选一的选择题，而是发挥各自优势的合作关系。</p>
 
         <table>
-            <tr><th>检测层</th><th>方法</th><th>检测什么</th><th>时间</th><th>输出</th></tr>
+            <tr><th scope="col">检测层</th><th scope="col">方法</th><th scope="col">检测什么</th><th scope="col">时间</th><th scope="col">输出</th></tr>
             <tr><td>第一层</td><td>统计阈值（3-sigma, IQR）</td><td>极端数值异常</td><td>实时/毫秒级</td><td>异常分数</td></tr>
             <tr><td>第二层</td><td>时间序列模型（Prophet, LSTM）</td><td>模式偏离、趋势突变</td><td>近实时/秒级</td><td>异常分数 + 模式描述</td></tr>
             <tr><td>第三层</td><td>LLM推理</td><td>语义异常、组合异常</td><td>准实时/秒-分级</td><td>异常判断 + 自然语言解释</td></tr>

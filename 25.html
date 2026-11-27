@@ -275,7 +275,7 @@ pre { max-width: 100%; }
 
         <table>
             <thead>
-                <tr><th>范式</th><th>代表方法</th><th>多样性控制</th><th>质量稳定性</th><th>扩展性</th><th>适用场景</th></tr>
+                <tr><th scope="col">范式</th><th scope="col">代表方法</th><th scope="col">多样性控制</th><th scope="col">质量稳定性</th><th scope="col">扩展性</th><th scope="col">适用场景</th></tr>
             </thead>
             <tbody>
                 <tr><td>角色驱动</td><td>Self-Instruct, Magpie</td><td>中</td><td>中（依赖种子数据）</td><td>高</td><td>通用指令数据、对话</td></tr>
@@ -475,7 +475,7 @@ class EvolInstruct:
 
         <table>
             <thead>
-                <tr><th>质量陷阱</th><th>表现形式</th><th>检测方法</th><th>缓解策略</th></tr>
+                <tr><th scope="col">质量陷阱</th><th scope="col">表现形式</th><th scope="col">检测方法</th><th scope="col">缓解策略</th></tr>
             </thead>
             <tbody>
                 <tr><td>模型坍塌</td><td>输出分布收敛到少数模式</td><td>跟踪 n-gram 熵 + 多样性指标</td><td>合成数据比例 &lt; 30%，多教师混合</td></tr>

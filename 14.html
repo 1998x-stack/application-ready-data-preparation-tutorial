@@ -392,7 +392,7 @@ pre { max-width: 100%; }
         <p>第三层：<strong>人工参与层</strong>。对于涉及重大业务影响或数据逻辑复杂的场景（如跨表一致性修复、业务规则重新定义），必须由领域专家做决策。系统提供数据支持，但最终决定权在人手中。</p>
 
         <table>
-            <tr><th>层级</th><th>自动化程度</th><th>适用场景</th><th>人工参与频率</th><th>典型耗时</th></tr>
+            <tr><th scope="col">层级</th><th scope="col">自动化程度</th><th scope="col">适用场景</th><th scope="col">人工参与频率</th><th scope="col">典型耗时</th></tr>
             <tr><td>全自动</td><td>100%</td><td>格式清洗、类型转换、简单缺失填补</td><td>零参与或抽查</td><td>分钟级</td></tr>
             <tr><td>建议审核</td><td>80-90%</td><td>异常值判断、填补合理性验证</td><td>每批次审核 (5分钟)</td><td>小时级</td></tr>
             <tr><td>人工参与</td><td>30-50%</td><td>业务规则变更、跨域数据修复</td><td>逐条确认</td><td>天级</td></tr>

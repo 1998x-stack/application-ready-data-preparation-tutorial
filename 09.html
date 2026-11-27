@@ -263,7 +263,7 @@ pre { max-width: 100%; }
         <p>LLMClean的核心创新在于提出了一种新的数据依赖形式：<strong>本体功能依赖（Ontology Functional Dependency, OFD）</strong>。要理解OFD，我们先对比一下它和传统FD的区别。</p>
 
         <table>
-            <tr><th>维度</th><th>传统FD</th><th>本体功能依赖(OFD)</th></tr>
+            <tr><th scope="col">维度</th><th scope="col">传统FD</th><th scope="col">本体功能依赖(OFD)</th></tr>
             <tr><td>依赖表示</td><td><code>A → B</code>（列相等约束）</td><td><code>A <sub>onto</sub>→ B</code>（语义关联约束）</td></tr>
             <tr><td>知识来源</td><td>数据表本身</td><td>领域本体 + 数据表</td></tr>
             <tr><td>推理能力</td><td>精确匹配</td><td>语义相似度 + 推理</td></tr>
@@ -377,7 +377,7 @@ OFD2: sensor_type →onto→ unit
         <p>LLMClean方法在三个不同的领域进行了系统性的验证，我们来看一组关键结果。</p>
 
         <table>
-            <tr><th>领域</th><th>数据规模</th><th>检出错误数</th><th>修复准确率</th><th>OFD数量</th><th>传统方法对比</th></tr>
+            <tr><th scope="col">领域</th><th scope="col">数据规模</th><th scope="col">检出错误数</th><th scope="col">修复准确率</th><th scope="col">OFD数量</th><th scope="col">传统方法对比</th></tr>
             <tr><td>IoT传感器</td><td>500万条</td><td>12,340</td><td>92.3%</td><td>47</td><td>规则方法只能检出41%</td></tr>
             <tr><td>医疗记录</td><td>80万条</td><td>4,567</td><td>88.7%</td><td>63</td><td>规则方法漏检率65%</td></tr>
             <tr><td>工业4.0生产</td><td>200万条</td><td>8,921</td><td>90.1%</td><td>52</td><td>统计方法漏检率58%</td></tr>

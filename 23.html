@@ -277,7 +277,7 @@ pre { max-width: 100%; }
 
         <table>
             <thead>
-                <tr><th>方法</th><th>基本原理</th><th>粒度</th><th>时间复杂度</th><th>召回率</th><th>误报率</th></tr>
+                <tr><th scope="col">方法</th><th scope="col">基本原理</th><th scope="col">粒度</th><th scope="col">时间复杂度</th><th scope="col">召回率</th><th scope="col">误报率</th></tr>
             </thead>
             <tbody>
                 <tr><td>Exact Match (SHA256)</td><td>全文哈希比较</td><td>文档级</td><td>O(n)</td><td>~100%（精确重复）</td><td>~0%</td></tr>
@@ -416,7 +416,7 @@ def lsh_bucket(signature, bands=16, rows_per_band=8):
 
         <table>
             <thead>
-                <tr><th>过滤方法</th><th>质量信号来源</th><th>标注需求</th><th>计算开销</th><th>主要优点</th><th>主要局限</th></tr>
+                <tr><th scope="col">过滤方法</th><th scope="col">质量信号来源</th><th scope="col">标注需求</th><th scope="col">计算开销</th><th scope="col">主要优点</th><th scope="col">主要局限</th></tr>
             </thead>
             <tbody>
                 <tr><td>困惑度 (PPL)</td><td>语言模型</td><td>无</td><td>中</td><td>无需标注，通用</td><td>有训练数据偏置</td></tr>

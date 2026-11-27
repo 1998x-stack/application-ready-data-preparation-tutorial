@@ -395,7 +395,7 @@ def clean_phone(phone: str) -> str:
         <p>函数合成不仅可以处理单个字段的问题，还可以解决复杂的跨字段修复。我们先来对比一下不同修复模式的特性。</p>
 
         <table>
-            <tr><th>修复模式</th><th>复杂度</th><th>LLM合成难度</th><th>可复现性</th><th>典型例子</th></tr>
+            <tr><th scope="col">修复模式</th><th scope="col">复杂度</th><th scope="col">LLM合成难度</th><th scope="col">可复现性</th><th scope="col">典型例子</th></tr>
             <tr><td>变换函数</td><td>低</td><td>低</td><td>高</td><td>日期格式统一、单位换算</td></tr>
             <tr><td>标准化脚本</td><td>中</td><td>中</td><td>高</td><td>同义词映射、名称标准化</td></tr>
             <tr><td>条件修复</td><td>高</td><td>中</td><td>高</td><td>跨字段联合约束修复</td></tr>
