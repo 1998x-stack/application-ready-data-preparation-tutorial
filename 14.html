@@ -266,6 +266,8 @@ pre { max-width: 100%; }
 
         <p>第三步：<strong>工作流执行</strong>。生成的DAG（有向无环图）工作流被发送到执行引擎，自动执行每个节点。每个节点执行完成后，结果被反馈给LLM，用于动态调整后续节点的参数。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处与技术限制：AutoDCWorkflow 出自 <a href="https://arxiv.org/abs/2412.06724">arXiv:2412.06724</a>，原文将清洗流程生成为一串 OpenRefine 操作序列以应对格式不一致、类型错误与重复等质量问题；本节为便于教学将其泛化为“带反馈回路的DAG工作流”，属于教学简化。</p>
+
         <pre><code>AutoDCWorkflow 生成的清洗工作流（JSON格式示例）
 
 {
