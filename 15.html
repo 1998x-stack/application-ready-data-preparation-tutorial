@@ -417,6 +417,8 @@ trainer.train()</code></pre>
 
         <p>第三种范式是2024年最具创新性的方向之一：多模型协同匹配。它的核心理念是——不同的匹配器有不同的优势和盲区，与其追求一个"万能"模型，不如让多个模型协同工作，各自负责自己擅长的判断维度。COMEM（COnsensus-based Multi-Entity Matching）框架就是这一思路的代表作。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处：COMEM 的综述描述见《Can LLMs Clean Up Your Mess? A Survey of Application-Ready Data Preparation with LLMs》（<a href="https://arxiv.org/abs/2601.17058">arXiv:2601.17058</a>），该综述归纳其用中等规模 LLM（3B–11B）以冒泡排序对 top-k 候选排序以缓解位置偏差、再用更强 LLM（如 GPT-4o）细化全局一致性；本节流程讲解为教学概述。</p>
+
         <p>COMEM的工作流程令人联想到冒泡排序（Bubble Sort）的思想。假设我们有N条记录需要去重匹配，传统的做法是两两比较所有组合——这在记录数量较大时计算成本呈O(N²)增长。COMEM的巧妙之处在于，它使用<strong>冒泡排序式</strong>的比较策略：先对候选记录对进行粗筛（使用轻量级匹配器），将高概率匹配的对标记出来，然后只对这些"可疑"对进行精细判断。</p>
 
         <p>具体来说，COMEM的流水线包含以下几个阶段：</p>

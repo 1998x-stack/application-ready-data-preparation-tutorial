@@ -269,6 +269,8 @@ pre { max-width: 100%; }
 
         <p>ZeroED与传统方法的一个关键不同在于它的<strong>反馈闭环</strong>。传统方法中，错误检测是一次性的；ZeroED中，LLM的判断会经过人工抽样验证后反馈到ML分类器和提示模板中，形成一个持续改进的正向循环。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处：ZeroED 的系统综述见《Can LLMs Clean Up Your Mess? A Survey of Application-Ready Data Preparation with LLMs》（<a href="https://arxiv.org/abs/2601.17058">arXiv:2601.17058</a>），该综述详述其“先用 LLM 零样本标注代表性取值（聚类选样），再训练轻量 ML 分类器端到端检测”的思路；本节架构讲解为教学概述。</p>
+
         <figure id="fig-zeroed-arch">
             <svg viewBox="0 0 840 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="zedTitle zedDesc" font-family="system-ui, 'PingFang SC', sans-serif" text-anchor="middle">
                 <title id="zedTitle">ZeroED 的混合 LLM-ML 架构</title>
