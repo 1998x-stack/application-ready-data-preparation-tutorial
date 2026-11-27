@@ -274,6 +274,8 @@ pre { max-width: 100%; }
 
         <p>LLM-TabAD的流程如下：系统首先对表格进行列级语义分析，理解每个字段的含义和取值范围。然后对每一行数据，生成该行的自然语言描述。最后，LLM根据这些描述和它对"正常"的理解，判断该行是否存在异常，并给出自然语言解释。</p>
 
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">技术订正：LLM-TabAD 出自 <a href="https://arxiv.org/abs/2406.16308">arXiv:2406.16308</a>（Anomaly Detection of Tabular Data Using LLMs）。原文将异常检测建模为<strong>批次级</strong>任务：给定一小批数据行，让（可在合成噪声数据上微调的）LLM 找出其中的异常行；本节为便于讲解改用"逐行自然语言描述"的示意讲法，与论文原始设定不同，读者以论文为准。</p>
+
         <pre><code>任务：检测以下数据行是否存在异常
 
 表名：电子商务订单表
