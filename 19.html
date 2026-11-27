@@ -438,7 +438,9 @@ def autolabel(text, label_set, client=client):
 
         <p>LLMAnno是检索增强标注（Retrieval-Augmented Annotation）的代表性框架。它的核心思想很简单：与其让LLM从零开始对一条数据进行分类，不如先给它看几个最相似的已标注样本作为参考。这个思路其实非常接近人类标注员的工作方式——你在标注一条数据时，总是会下意识地回想"上一条类似的我是怎么标的"。LLMAnno把这个隐式过程显式化了。</p>
 
-        <p>技术实现上，LLMAnno使用text-embedding-3-large模型将每条数据转换为768维的嵌入向量，构建一个FAISS索引。对于新样本，从索引中检索K个最相似的已标注样本，将它们作为少样本示例注入到Prompt中，再由LLM完成标注。这种机制的优势在于：标注标准随着标注数据的积累会变得越来越一致，因为每一次标注都会成为后续标注的参考素材。</p>
+        <p>技术实现上，LLMAnno 使用 text-embedding-3-large 等嵌入模型将每条数据编码为向量（具体维度以模型与配置为准），构建向量索引。对于新样本，从索引中检索 K 个最相似的已标注样本，将它们作为少样本示例注入到 Prompt 中，再由 LLM 完成标注。这种机制的优势在于：标注标准随着标注数据的积累会变得越来越一致，因为每一次标注都会成为后续标注的参考素材。</p>
+
+        <p style="font-size:0.85rem;color:#64748b;line-height:1.6;">出处：AutoLabel 与 LLMAnno 的归纳描述与评测引自综述《Can LLMs Clean Up Your Mess? A Survey of Application-Ready Data Preparation with LLMs》（<a href="https://arxiv.org/abs/2601.17058">arXiv:2601.17058</a>）中的数据标注章节（LLMAnno 即该综述引用的检索增强标注方法）；本节实现细节与向量维度参数为教学概述，以原文为准。</p>
 
         <pre><code># LLMAnno 检索增强标注核心逻辑
 import numpy as np
